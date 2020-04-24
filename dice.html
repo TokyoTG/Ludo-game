@@ -116,12 +116,15 @@
     <p>
         <button id="roll">Role Dice</button>
     </p>
-    <!-- <div class="spinner">
-        <div class="cube1"></div>
-        <div class="cube2"></div>
-    </div> -->
+    <div id="numbers">
+        <p id="num1">8</p>
+        <p id="num2">8</p>
+        <p id="num1">8</p>
+    </div>
+    <a href="/game.html" onclick="objectSetter()">Start Game</a>
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="/index.js"></script>
 <script>
     function generateRandom() {
         let arr = []
@@ -171,12 +174,16 @@
     }
 
     $("#roll").click(function (e) {
+        let randomNum;
         e.preventDefault()
         let v = setInterval(function () {
-            displayNumbers(...lookUpRandomNumber(...generateRandom()))
+            randomNum = generateRandom()
+            displayNumbers(...lookUpRandomNumber(...randomNum))
         }, 500);
         setTimeout(function () {
             clearInterval(v);
+            console.log(randomNum);
+
         }, 2000)
         removeSpinnerClass();
 
