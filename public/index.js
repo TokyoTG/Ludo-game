@@ -113,6 +113,7 @@ function select() {
   let arr;
   let squares = Array.from($(".square"));
   let cells = Array.from($(".cells"));
+  let dropCells = Array.from($(".celldrop"));
   for (let square of squares) {
     //removes selected class from squares with selected class
     if ($(square).hasClass("selected")) {
@@ -122,6 +123,15 @@ function select() {
     
   }
   for (let cell of cells) {
+    //removes selected class from squares with selected class
+    if ($(cell).hasClass("selected")) {
+      $(cell).unbind()
+      $(cell).removeClass("selected");
+    }
+    
+  }
+
+  for (let cell of dropCells) {
     //removes selected class from squares with selected class
     if ($(cell).hasClass("selected")) {
       $(cell).unbind()
@@ -183,7 +193,8 @@ seedDetails.count += num;
 
 
 function getClassList(element) {
-  var prevOccupier, removealIndex;
+  var prevOccupier, removealIndex, occupiers;
+  var dropdownArray = {}
  //check if the piece count as is enough to remove the piece from the game
   if(element.count == 62){
     return modifyObject(element.house,element.player,element.pieceNmuber)
@@ -237,15 +248,22 @@ function getClassList(element) {
     });
     
     if(res.length){
-      removealIndex = cells.indexOf(res[0]);
-      cells.splice(removealIndex,1);
+     
       //check if the cell is occupied and stores the occupier details in variable
-    if (res[0].dataset.occupier && res[0].dataset.occupier != element.pieceNmuber + "-" + element.house ) {
+      let currentOccupier = element.pieceNmuber + "-" + element.house
+    if (res[0].dataset.occupier && res[0].dataset.occupier != currentOccupier) {
       prevOccupier = res[0].dataset.occupier;
+      if(localStorage.getItem('occupiers')){
+        let obj = getOccupiedDetails(currentOccupier);
+        dropdownArray = JSON.parse(localStorage.getItem('occupiers'))
+        dropdownArray[currentOccupier] = obj;
+      }
+        dropdownArray[prevOccupier] = getOccupiedDetails(prevOccupier)
+        dropdownArray[currentOccupier] = getOccupiedDetails(currentOccupier);
       //check if the previous occupier player is the same as the current piece
       if (res[0].dataset.player == element.player) {
-        res[0].innerHTML = 2;
-        // res[0].dataset.occupier =  prevOccupier+  " " + element.pieceNmuber   
+        res[0].textContent = Object.keys(dropdownArray).length;
+     
       } else {
         //return the piece back home if its another house 
         modifyObject(element.house, element.player, element.pieceNmuber);
@@ -253,6 +271,21 @@ function getClassList(element) {
         addPieceBackToHouse(getOccupiedDetails(prevOccupier));
         return resetPieceCount(getOccupiedDetails(prevOccupier));
       }
+
+      var text = ``
+      for(let key in dropdownArray){  
+        if(dropdownArray[key].house == element.house){
+          text += `<a class="${dropdownArray[key].house} celldrop"  onclick="select()"></a>`
+        }
+        
+      }
+      let frame = `<div class="dropdown-content">
+      ${text}
+       </div>`
+       res[0].innerHTML = frame;
+       $(res[0]).addClass("dropdown");
+       console.log(frame)
+      localStorage.setItem('occupiers',JSON.stringify(dropdownArray))
     }
     //adds the appropriate class to piece
       $(res[0]).addClass(element.house,'shadow');
@@ -272,7 +305,7 @@ function getClassList(element) {
 function collateCount() {
   //returns an array of the seeds objects
   let arr = ["square-one", "square-two", "square-three", "square-four"];
-  let colorArr = ["green", "red", "blue", "yellow"];
+  let colorArr = ["yellow", "red", "blue", "green"];
   let res = [];
   let obj;
   for (let j = 0; j < colorArr.length; j++) {
@@ -289,6 +322,8 @@ function collateCount() {
 function cellSanitizer(){
   let arrHouse = ["green", "blue", "red", "yellow"];
 let cells = Array.from($(".cells"));
+let obj ={}
+localStorage.removeItem('occupiers');
   cells.forEach((data,index)=>{
       if($(data).hasClass(arrHouse[0]) && $(data).hasClass('shadow')){
         $(data).removeClass(arrHouse[0]);
@@ -306,6 +341,9 @@ let cells = Array.from($(".cells"));
         $(data).removeClass(arrHouse[3]);
         $(data).removeClass('shadow');
       }
+    //   data.innerHTML = '';
+    // data.dataset.player = '';
+    // data.dataset.occupier=''
       data.setAttribute('onclick','');
     })
 }
@@ -404,6 +442,7 @@ function goHouse(element) {
 
 function resetAll(){
   //resets all counts and sets all seeds to default
+  localStorage.clear()
   objectSetter()
   storePiece()
   seedDisplay(objectRetriever());
