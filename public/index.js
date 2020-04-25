@@ -183,7 +183,7 @@ seedDetails.count += num;
 
 
 function getClassList(element) {
-  var prevOccupier;
+  var prevOccupier, removealIndex;
  //check if the piece count as is enough to remove the piece from the game
   if(element.count == 62){
     return modifyObject(element.house,element.player,element.pieceNmuber)
@@ -209,13 +209,11 @@ function getClassList(element) {
         houseCode = "y-starts";
         break;
     }
-
-    let arr = ["green", "blue", "red", "yellow"];
     let cells = Array.from($(".cells"));
     //filters the house going cells
-    let filtered = cells.filter((element) => {
-      if (element.dataset.index) {
-        return element;
+    let filtered = cells.filter((data) => {
+      if (data.dataset.index) {
+        return data;
       }
     });
    
@@ -225,14 +223,6 @@ function getClassList(element) {
         return element;
       }
     });
-    filtered.forEach(data=>{
-      if($(data).hasClass(element.house) && $(data).hasClass('shadow')){
-        $(data).removeClass(element.house);
-        $(data).removeClass('shadow');
-      }
-    
-    })
-  
     // calculates the index the seed is going to be.
     indexCount = element.count + +indexCount[0].dataset.index;
     let res = filtered.filter((cell) => {
@@ -245,12 +235,12 @@ function getClassList(element) {
 
       return +cell.dataset.index == indexCount;
     });
-//check if the cell is occupied and stores the occupier details in variable
+    
+    if(res.length){
+      removealIndex = cells.indexOf(res[0]);
+      cells.splice(removealIndex,1);
+      //check if the cell is occupied and stores the occupier details in variable
     if (res[0].dataset.occupier && res[0].dataset.occupier != element.pieceNmuber + "-" + element.house ) {
-      // if(res[0].hasClass(element.house)){
-      //   $(res[0]).addClass(element.house);
-      //   $(res[0]).addClass("shadow");
-      // }
       prevOccupier = res[0].dataset.occupier;
       //check if the previous occupier player is the same as the current piece
       if (res[0].dataset.player == element.player) {
@@ -268,14 +258,15 @@ function getClassList(element) {
       $(res[0]).addClass(element.house,'shadow');
       $(res[0]).addClass("shadow");
    
- 
-   
     res[0].setAttribute('onclick','select()');
     res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
     res[0].dataset.player = element.player;
     //removes piece from inside house
     modifyObject(element.house, element.player, element.pieceNmuber);
   }
+  }
+
+
 }
 
 function collateCount() {
@@ -293,9 +284,38 @@ function collateCount() {
   return res;
 }
 
+
+//removes all class house and shadow from cells
+function cellSanitizer(){
+  let arrHouse = ["green", "blue", "red", "yellow"];
+let cells = Array.from($(".cells"));
+  cells.forEach((data,index)=>{
+      if($(data).hasClass(arrHouse[0]) && $(data).hasClass('shadow')){
+        $(data).removeClass(arrHouse[0]);
+        $(data).removeClass('shadow');
+      }
+      if($(data).hasClass(arrHouse[1]) && $(data).hasClass('shadow')){
+        $(data).removeClass(arrHouse[1]);
+        $(data).removeClass('shadow');
+      }
+      if($(data).hasClass(arrHouse[2]) && $(data).hasClass('shadow')){
+        $(data).removeClass(arrHouse[2]);
+        $(data).removeClass('shadow');
+      }
+      if($(data).hasClass(arrHouse[3]) && $(data).hasClass('shadow')){
+        $(data).removeClass(arrHouse[3]);
+        $(data).removeClass('shadow');
+      }
+      data.setAttribute('onclick','');
+    })
+}
+
 function displayOntheMove(arr) {
 //display all piece that are on the move
-  arr.forEach((element) => {
+cellSanitizer()
+let filtered = arr.filter(piece=>
+  piece.count >= 6 )
+  filtered.forEach((element) => {
     getClassList(element);
   });
 }
