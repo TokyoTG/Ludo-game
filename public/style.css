@@ -1,0 +1,346 @@
+* {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+.game {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px auto;
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+.green {
+  background-color: #66bb6a;
+}
+.red {
+  background-color: #e53935;
+  border: none;
+}
+.yellow {
+  background-color: #fff176;
+  border: none;
+}
+.blue {
+  background-color: #29b6f6;
+  border: none;
+}
+
+.house {
+  display: inline-block;
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  padding: 7%;
+}
+.box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  padding: 20%;
+}
+.square {
+  position: absolute;
+  border-radius: 50px;
+  cursor: pointer;
+  width: 25%;
+  height: 25%;
+}
+.square-one {
+  top: 20%;
+  left: 20%;
+}
+.square-two {
+  top: 20%;
+  right: 20%;
+}
+.square-three {
+  bottom: 20%;
+  left: 20%;
+}
+.square-four {
+  bottom: 20%;
+  right: 20%;
+}
+.home {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  width: 20%;
+  height: 20%;
+  border-bottom: 20px solid #e53935;
+  border-top: 20px solid #fff176;
+  border-left: 20px solid #66bb6a;
+  border-right: 20px solid #29b6f6;
+}
+.cells {
+  position: absolute;
+  width: 6.66%;
+  text-align: center;
+  font-size: 1.3em;
+  font-weight: bold;
+  height: 6.66%;
+  border-collapse: collapse;
+  border: 1px solid #e5e5e569;
+}
+
+.safe {
+  background-color: #99999938;
+  -webkit-clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+.g-start {
+  background-color: #66bb6a;
+  -webkit-clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+  clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+}
+.y-start {
+  background-color: #fff176;
+  -webkit-clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+  clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+}
+.r-start {
+  background-color: #e53935;
+  -webkit-clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+  clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+}
+.b-start {
+  background-color: #29b6f6;
+  -webkit-clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+  clip-path: polygon(
+    20% 0%,
+    0% 20%,
+    30% 50%,
+    0% 80%,
+    20% 100%,
+    50% 70%,
+    80% 100%,
+    100% 80%,
+    70% 50%,
+    100% 20%,
+    80% 0%,
+    50% 30%
+  );
+}
+
+.square.selected, .cells.selected,.celldrop.selected{
+  border: 2px solid rgb(247, 10, 120);
+}
+
+button{
+  padding: 10px;
+}
+
+.cells.shadow{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19),
+   0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+   border-radius: 50px;
+}
+
+
+
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a, .dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover, .dropdown:hover .dropbtn {
+  background-color: red;
+}
+
+li.dropdown {
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 10px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a{
+  color: black;
+ border-radius: 50px;
+  margin-top: 5px;
+  cursor: pointer;
+  height: 33.29px;
+  width: 33.29px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a.green{
+  background: #2e7d32;
+}
+.dropdown-content a.red{
+  background: #b71c1c;
+}
+.dropdown-content a.blue{
+  background: #1976d2 ;
+}
+
+.dropdown-content a.yellow{
+  background: #ffd600;
+}
+
+/* .dropdown-content a:hover {background-color: #f1f1f1;} */
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* .dropdown-content a:first-child::before{
+  content: "m";
+} */
+
+/* On the move color*/
+.cells.shadow.yellow{
+  background: #ffd600;
+}
+
+.cells.shadow.red{
+  background: #b71c1c;
+}
+.cells.shadow.blue{
+  background: #1976d2 ;
+}
+.cells.shadow.green{
+  background: #2e7d32;
+}

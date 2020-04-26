@@ -121,8 +121,12 @@
         <div class="cube2"></div>
     </div> -->
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<!-- <script src="../libs.js"></script> -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
+    
+    var socket = io();
     function generateRandom() {
         let arr = []
         let num1, num2;
@@ -131,6 +135,10 @@
         arr = [num1, num2];
         return arr;
     }
+
+    socket.on('message',function(data){
+        console.log(data);
+    })
 
     function lookUpRandomNumber(num1, num2) {
         let arr = [];
@@ -170,15 +178,26 @@
         <i class="fas fa-dice-${key2} cube2"></i>`);
     }
 
+    socket.on('dice', function(data){
+            // let v = setInterval(function () {
+            displayNumbers(...lookUpRandomNumber(...data))
+        // }, 500);
+        // setTimeout(function () {
+        //     clearInterval(v);
+        // }, 2000)
+ removeSpinnerClass();
+})
     $("#roll").click(function (e) {
-        e.preventDefault()
-        let v = setInterval(function () {
-            displayNumbers(...lookUpRandomNumber(...generateRandom()))
-        }, 500);
-        setTimeout(function () {
-            clearInterval(v);
-        }, 2000)
-        removeSpinnerClass();
+    
+    socket.emit("roll","can i roll");
+        // e.preventDefault()
+        // let v = setInterval(function () {
+        //     displayNumbers(...lookUpRandomNumber(...generateRandom()))
+        // }, 500);
+        // setTimeout(function () {
+        //     clearInterval(v);
+        // }, 2000)
+        // removeSpinnerClass();
 
     })
 </script>
