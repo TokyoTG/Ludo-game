@@ -131,13 +131,12 @@ function select() {
     
   }
 
-  for (let cell of dropCells) {
+  for (let cells of dropCells) {
     //removes selected class from squares with selected class
-    if ($(cell).hasClass("selected")) {
-      $(cell).unbind()
-      $(cell).removeClass("selected");
-    }
-    
+    if ($(cells).hasClass("selected")) {
+      $(cells).unbind()
+      $(cells).removeClass("selected");
+    }  
   }
   let element = $(event.target);
   let res;
@@ -146,9 +145,13 @@ function select() {
   arr = Array.from(event.target.classList);
   if(arr.includes('shadow')){
     res = event.target.dataset.occupier;
+  }else if(arr.includes('celldrop')){
+    res = arr[1];
   }else{
       res = arr[1]+"-"+arr[2];
   }
+  
+  // console.log(res)
   localStorage.setItem('selected',res);
   return res;
 }
@@ -195,6 +198,7 @@ seedDetails.count += num;
 function getClassList(element) {
   var prevOccupier, removealIndex, occupiers;
   var dropdownArray = {}
+  let arr = [];
  //check if the piece count as is enough to remove the piece from the game
   if(element.count == 62){
     return modifyObject(element.house,element.player,element.pieceNmuber)
@@ -204,22 +208,8 @@ function getClassList(element) {
   if (element.count >= 6) {
     //removes the traditional six from the piece count
     element.count -= 6;
-    let houseCode;
-    // gets the starting cell of the piece
-    switch (element.house) {
-      case "green":
-        houseCode = "g-starts";
-        break;
-      case "red":
-        houseCode = "r-starts";
-        break;
-      case "blue":
-        houseCode = "b-starts";
-        break;
-      case "yellow":
-        houseCode = "y-starts";
-        break;
-    }
+     // gets the starting cell of the piece
+    let houseCode = getHouseCode(element)
     let cells = Array.from($(".cells"));
     //filters the house going cells
     let filtered = cells.filter((data) => {
@@ -253,13 +243,8 @@ function getClassList(element) {
       let currentOccupier = element.pieceNmuber + "-" + element.house
     if (res[0].dataset.occupier && res[0].dataset.occupier != currentOccupier) {
       prevOccupier = res[0].dataset.occupier;
-      if(localStorage.getItem('occupiers')){
-        let obj = getOccupiedDetails(currentOccupier);
-        dropdownArray = JSON.parse(localStorage.getItem('occupiers'))
-        dropdownArray[currentOccupier] = obj;
-      }
-        dropdownArray[prevOccupier] = getOccupiedDetails(prevOccupier)
-        dropdownArray[currentOccupier] = getOccupiedDetails(currentOccupier);
+      dropdownArray = storeOcuppiers(prevOccupier,currentOccupier,indexCount)
+     
       //check if the previous occupier player is the same as the current piece
       if (res[0].dataset.player == element.player) {
         res[0].textContent = Object.keys(dropdownArray).length;
@@ -272,19 +257,13 @@ function getClassList(element) {
         return resetPieceCount(getOccupiedDetails(prevOccupier));
       }
 
-      var text = ``
-      for(let key in dropdownArray){  
-        if(dropdownArray[key].house == element.house){
-          text += `<a class="${dropdownArray[key].house} celldrop"  onclick="select()"></a>`
-        }
-        
-      }
+      var text = prepareDropdown(dropdownArray,element,indexCount)
       let frame = `<div class="dropdown-content">
       ${text}
        </div>`
        res[0].innerHTML = frame;
        $(res[0]).addClass("dropdown");
-       console.log(frame)
+      //  console.log(arr)
       localStorage.setItem('occupiers',JSON.stringify(dropdownArray))
     }
     //adds the appropriate class to piece
@@ -450,6 +429,57 @@ function resetAll(){
   location.reload()
 }
 
-function takePieceOut(element){
-  
+function prepareDropdown(obj,element,indexCount){
+  var text = ``
+  for(let key in obj){ 
+    if(obj[key].index == indexCount && obj[key].player == element.player ){
+      text += `<a class="${obj[key].house} ${key} celldrop"  onclick="select()"></a>`
+
+    } 
+    if(obj[key].player == element.player){
+      // console.log(dropdownArray[key])  
+    }
+  }
+  return text;
+}
+
+function storeOcuppiers(prevOccupier,currentOccupier,indexCount){
+  let dropdownObj ={}
+  let obj;
+  if(localStorage.getItem('occupiers')){
+    obj = getOccupiedDetails(currentOccupier);
+    dropdownObj = JSON.parse(localStorage.getItem('occupiers'))
+    obj.index = indexCount
+    dropdownObj[currentOccupier] = obj;
+  }
+  obj = getOccupiedDetails(prevOccupier)
+obj.index = indexCount
+    dropdownObj[prevOccupier] = obj;
+
+    // dropdownObj.index = indexCount;
+    obj = getOccupiedDetails(currentOccupier);
+    obj.index = indexCount;
+    dropdownObj[currentOccupier] = obj;
+    
+    return dropdownObj;
+}
+
+function getHouseCode(element){
+  let houseCode;
+  // gets the starting cell of the piece
+  switch (element.house) {
+    case "green":
+      houseCode = "g-starts";
+      break;
+    case "red":
+      houseCode = "r-starts";
+      break;
+    case "blue":
+      houseCode = "b-starts";
+      break;
+    case "yellow":
+      houseCode = "y-starts";
+      break;
+  }
+  return houseCode;
 }
