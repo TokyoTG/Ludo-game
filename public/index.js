@@ -111,34 +111,7 @@ function seedDisplay(obj) {
 function select() {
   //gets all squares
   let arr;
-  let squares = Array.from($(".square"));
-  let cells = Array.from($(".cells"));
-  let dropCells = Array.from($(".celldrop"));
-  for (let square of squares) {
-    //removes selected class from squares with selected class
-    if ($(square).hasClass("selected")) {
-      $(square).removeClass("selected");
-      $(square).unbind()
-    }
-    
-  }
-  for (let cell of cells) {
-    //removes selected class from squares with selected class
-    if ($(cell).hasClass("selected")) {
-      $(cell).unbind()
-      $(cell).removeClass("selected");
-    }
-    
-  }
-
-  for (let cells of dropCells) {
-    //removes selected class from squares with selected class
-    if ($(cells).hasClass("selected")) {
-      $(cells).unbind()
-      $(cells).removeClass("selected");
-    }  
-  }
-  let element = $(event.target);
+  clearAllSelected()
   let res;
   // add selected class to the clicked square
   $(event.target).addClass("selected");
@@ -158,7 +131,7 @@ function select() {
 $("#count").click(function (e) {
   let selected = localStorage.getItem('selected');
    increasePieceCount(6, selected);
-  select()
+ clearAllSelected()
   localStorage.setItem('selected','');
 });
 //Store Moving Seed Properties
@@ -191,7 +164,7 @@ seedDetails.count += num;
   }
   
   localStorage.setItem(code, JSON.stringify(seedDetails));
-  displayOntheMove(collateCount());
+  displayOntheMove(collateCount(seedDetails.house));
 }
 
 
@@ -259,7 +232,9 @@ function getClassList(element) {
 
       var text = prepareDropdown(dropdownArray,element,indexCount)
       let frame = `<div class="dropdown-content">
+      
       ${text}
+     
        </div>`
        res[0].innerHTML = frame;
        $(res[0]).addClass("dropdown");
@@ -281,10 +256,15 @@ function getClassList(element) {
 
 }
 
-function collateCount() {
+function collateCount(house) {
   //returns an array of the seeds objects
   let arr = ["square-one", "square-two", "square-three", "square-four"];
   let colorArr = ["yellow", "red", "blue", "green"];
+  if(house){
+      colorArr.splice(colorArr.indexOf(house),1);
+      colorArr.push(house);
+  }
+
   let res = [];
   let obj;
   for (let j = 0; j < colorArr.length; j++) {
@@ -320,9 +300,9 @@ localStorage.removeItem('occupiers');
         $(data).removeClass(arrHouse[3]);
         $(data).removeClass('shadow');
       }
-    //   data.innerHTML = '';
-    // data.dataset.player = '';
-    // data.dataset.occupier=''
+      data.innerHTML = '';
+    data.dataset.player = '';
+    data.dataset.occupier=''
       data.setAttribute('onclick','');
     })
 }
@@ -482,4 +462,34 @@ function getHouseCode(element){
       break;
   }
   return houseCode;
+}
+
+function clearAllSelected(){
+  let squares = Array.from($(".square"));
+  let cells = Array.from($(".cells"));
+  let dropCells = Array.from($(".celldrop"));
+  for (let square of squares) {
+    //removes selected class from squares with selected class
+    if ($(square).hasClass("selected")) {
+      $(square).removeClass("selected");
+      $(square).unbind()
+    }
+    
+  }
+  for (let cell of cells) {
+    //removes selected class from squares with selected class
+    if ($(cell).hasClass("selected")) {
+      $(cell).unbind()
+      $(cell).removeClass("selected");
+    }
+    
+  }
+
+  for (let cells of dropCells) {
+    //removes selected class from dropdoown items with selected class
+    if ($(cells).hasClass("selected")) {
+      $(cells).unbind()
+      $(cells).removeClass("selected");
+    }  
+  }
 }

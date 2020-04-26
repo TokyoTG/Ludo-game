@@ -45,6 +45,7 @@
 }
 .square {
   position: absolute;
+  border-radius: 50px;
   cursor: pointer;
   width: 25%;
   height: 25%;
@@ -250,6 +251,7 @@ button{
 .cells.shadow{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19),
    0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+   border-radius: 50px;
 }
 
 
@@ -294,7 +296,7 @@ li.dropdown {
 
 .dropdown-content a{
   color: black;
- 
+ border-radius: 50px;
   margin-top: 5px;
   cursor: pointer;
   height: 33.29px;
@@ -305,21 +307,40 @@ li.dropdown {
 }
 
 .dropdown-content a.green{
-  background: #66bb6a;
+  background: #2e7d32;
 }
 .dropdown-content a.red{
-  background: #e53935;
+  background: #b71c1c;
 }
 .dropdown-content a.blue{
-  background: #29b6f6;
+  background: #1976d2 ;
 }
 
 .dropdown-content a.yellow{
-  background: #fff176;
+  background: #ffd600;
 }
 
 /* .dropdown-content a:hover {background-color: #f1f1f1;} */
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+/* .dropdown-content a:first-child::before{
+  content: "m";
+} */
+
+/* On the move color*/
+.cells.shadow.yellow{
+  background: #ffd600;
+}
+
+.cells.shadow.red{
+  background: #b71c1c;
+}
+.cells.shadow.blue{
+  background: #1976d2 ;
+}
+.cells.shadow.green{
+  background: #2e7d32;
 }
