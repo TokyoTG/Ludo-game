@@ -13,11 +13,13 @@ const PORT = process.env.PORT || 3000;
 io.on("connection", (socket) => {
   console.log("user connected");
   // io.emit('message',lib.generateRandom())
- socket.join('play')
- console.log(socket.rooms);
+//  socket.join('play')
+//  console.log(socket.rooms);
+console.log(io.sockets.clients().connected);
+
   socket.on('roll', function(data){
-    socket.join('game');
-    console.log(socket.rooms);
+    // socket.join('game');
+    
   let v =   setInterval(function(){
     io.emit("dice", lib.generateRandom())
   },500)
