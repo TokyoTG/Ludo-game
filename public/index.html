@@ -1,49 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <style>
-      p{
-            display: inline-block;
-        padding: 10px 15px;
-        color:white
-      }
-       #p2{
-      background: green;
-      }
-      #p1 {
-        background: blue;
-      }
-  </style>
-  <body>
-    <div>
-        <h2>Choose Character</h2>
-        <p id="p1">Player 1</p>
-        <p id="p2">Player 2</p>
-      <a href="game.html" onclick="storePlayer()">Play game</a>
 
-      <a href="dice.html">Dice</a> |
-      <a href="dice2.html">Dice2</a>
-    </div>
-    <script>
-        function storePlayer(){
-            let p1 = document.getElementById('p1');
-            let p2 = document.getElementById('p2');
-            let playerOneObject= {
-                playerNumber:'one',
-                houses:['green', 'yellow']
-            }
-            let playerTwoObject= {
-                playerNumber:'one',
-                houses:['green', 'yellow']
-            }
-            localStorage.setItem('playerOneObject',playerOneObject);
-            localStorage.setItem('playerTwoObject',playerTwoObject);
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+<style>
+  li {
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid;
+    border-collapse: collapse;
+  }
+
+  /* #create,
+  #join {
+    display: none;
+  } */
+</style>
+
+<body>
+  <div>
+    <h2>Welcome Please Create or Join Game Room</h2>
+    <form id="create">
+      <h4>Create Room</h4>
+      <p>All fields are required</p>
+      <p>
+        <label for="creator-name">Player Name</label><br>
+        <input type="text" name="creator-name" id="creator-name" required>
+      </p>
+      <p>
+        <label for="room-name">Room Name</label><br>
+        <input type="text" name="room-name" id="room-name" required>
+      </p>
+      <button>Submit</button>
+    </form>
+    <form id="join">
+      <h4>Join Room</h4>
+      <p>All fields are required</p>
+      <p>
+        <label for="player-name">Player Name</label>
+        <input type="text" name="player-name" id="player-name" required>
+      </p>
+      <label for="room-id">Room Id</label>
+      <input type="text" name="room-id" id="room-id" required>
+      </p>
+      <button>Submit</button>
+    </form>
+
+    <h4>Available Rooms</h4>
+    <ul id="roomList">
+
+    </ul>
+    <a href="dice.html">Dice</a> |
+    <a href="dice2.html">Dice2</a>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./index.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+    // if (localStorage.getItem('roomObj')) {
+    //   location.replace('game.html')
+    // }
+
+
+    var socket = io();
+    let roomObj;
+
+    //creates a new room
+    $("#create").submit(function (e) {
+      e.preventDefault()
+      let playerName = $("#creator-name").val();
+      let roomName = $("#room-name").val()
+      roomObj = {
+        name: roomName,
+        creator: playerName,
+        id: generateRoomId(),
+        numberOfPlayers: 1,
+        playerName: playerName,
+      }
+      localStorage.clear();
+      objectSetter(2);
+      storePiece();
+      localStorage.setItem('roomObj', JSON.stringify(roomObj))
+      socket.emit('create_room', roomObj);
+      location.assign('./game.html');
+    })
+
+
+    let rooms;
+
+    //gets available room list
+    socket.on('rooms', function (data) {
+      if (data.length) {
+        let text = ""
+        rooms = data;
+        $("#roomList").html('');
+        for (let item of data) {
+          if (item.numberOfPlayers < 1) {
+            text += `
+ <li class="list-item" onclick="getroomName()">${item.name}</li>
+        `
+          }
         }
-    </script>
-  </body>
+        $("#roomList").html(text);
+        console.log(data)
+      }
+
+    })
+
+
+    function generateRoomId() {
+      let roomId = "";
+      let index;
+      let alphabets = [9, 'a', 'A', 2, 'c', 'C', 3, 'D', 4, 'E', 5, 'F', 6, 'G', 7, 'I', 8, 'm', "M",
+        '1', 'z', 'w', 0
+      ];
+
+      for (let i = 0; i < 20; i++) {
+        index = Math.floor(Math.random() * alphabets.length - 1) + 1;
+        roomId
+          += alphabets[index];
+      }
+      return roomId;
+    }
+
+
+    $("#join").submit(function (e) {
+      e.preventDefault()
+      let playerName = $("#player-name").val();
+      let roomId = $("#room-id").val()
+      for (let item of rooms) {
+        if (item.id == roomId) {
+          item.numberOfPlayers += 1;
+          item.playerName = playerName;
+          socket.emit('updateRoom', item);
+          localStorage.setItem('roomObj', JSON.stringify(item))
+          location.assign('./game.html')
+        }
+      }
+    })
+  </script>
+</body>
 
 </html>
