@@ -240,22 +240,23 @@
   );
 }
 
-.square.selected, .cells.selected,.celldrop.selected{
+.square.selected,
+.cells.selected,
+.celldrop.selected,
+.rolls.selected {
   border: 2px solid rgb(247, 10, 120);
 }
 
-button{
+button {
   padding: 10px;
 }
 
-.cells.shadow{
+.cells.shadow {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19),
-   0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-   border-radius: 50px;
+    0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 50px;
+  z-index: 100;
 }
-
-
-
 
 ul {
   list-style-type: none;
@@ -269,7 +270,8 @@ li {
   float: left;
 }
 
-li a, .dropbtn {
+li a,
+.dropbtn {
   display: inline-block;
   color: white;
   text-align: center;
@@ -277,7 +279,8 @@ li a, .dropbtn {
   text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
+li a:hover,
+.dropdown:hover .dropbtn {
   background-color: red;
 }
 
@@ -290,13 +293,14 @@ li.dropdown {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 10px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
-.dropdown-content a{
+.dropdown-content a {
   color: black;
- border-radius: 50px;
+  border-radius: 50px;
+  z-index: 100;
   margin-top: 5px;
   cursor: pointer;
   height: 33.29px;
@@ -306,17 +310,17 @@ li.dropdown {
   text-align: left;
 }
 
-.dropdown-content a.green{
+.dropdown-content a.green {
   background: #2e7d32;
 }
-.dropdown-content a.red{
+.dropdown-content a.red {
   background: #b71c1c;
 }
-.dropdown-content a.blue{
-  background: #1976d2 ;
+.dropdown-content a.blue {
+  background: #1976d2;
 }
 
-.dropdown-content a.yellow{
+.dropdown-content a.yellow {
   background: #ffd600;
 }
 
@@ -331,16 +335,24 @@ li.dropdown {
 } */
 
 /* On the move color*/
-.cells.shadow.yellow{
+.cells.shadow.yellow {
   background: #ffd600;
 }
 
-.cells.shadow.red{
+.cells.shadow.red {
   background: #b71c1c;
 }
-.cells.shadow.blue{
-  background: #1976d2 ;
+.cells.shadow.blue {
+  background: #1976d2;
 }
-.cells.shadow.green{
+.cells.shadow.green {
   background: #2e7d32;
+}
+
+.rolls {
+  font-weight: 700;
+  font-size: 1.2em;
+  display: inline-block;
+  background: greenyellow;
+  padding: 5px 10px;
 }

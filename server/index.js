@@ -21,12 +21,13 @@ io.on("connection", (socket) => {
 
   //updates the number of player in a room
   socket.on("updateRoom", (data) => {
-    if (data.numberOfplayers > 0) {
-      roomList.splice(roomList.indexOf(data), 1);
-      roomList.push(data);
-    } else {
-      roomList.splice(roomList.indexOf(data), 1);
-    }
+    // if (data.numberOfplayers > 0) {
+    roomList.splice(roomList.indexOf(data), 1);
+    roomList.push(data);
+    // }
+    // else {
+    //   roomList.splice(roomList.indexOf(data), 1);
+    // }
     console.log(roomList);
   });
   //sends out the room object
@@ -34,8 +35,11 @@ io.on("connection", (socket) => {
 
   socket.on("game", function (data) {
     socket.rooms["roomName"] = data.name;
-    socket.join(data, function () {
-      io.to(data).emit("user", ` ${data.playerName} Joined ${data.name} room`);
+    socket.join(data.name, function () {
+      io.to(data.name).emit(
+        "user",
+        ` ${data.playerName} Joined ${data.name} room`
+      );
     });
     console.log(socket.rooms);
   });

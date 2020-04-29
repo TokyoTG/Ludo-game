@@ -147,6 +147,8 @@ function storePiece() {
       }
     }
   }
+  let arr = [];
+  localStorage.setItem("outsidePiece", JSON.stringify(arr));
 }
 
 function increasePieceCount(num, code) {
@@ -170,7 +172,9 @@ function getClassList(element) {
     return modifyObject(element.house, element.player, element.pieceNmuber);
   }
   // handles the house going part of the game
-  goHouse(element);
+  if (element.count >= 57) {
+    return goHouse(element);
+  }
   if (element.count >= 6) {
     //removes the traditional six from the piece count
     element.count -= 6;
@@ -222,10 +226,13 @@ function getClassList(element) {
           res[0].textContent = Object.keys(dropdownArray).length;
         } else {
           //return the piece back home if its another house
+          let prev = getOccupiedDetails(prevOccupier);
+          $(res[0]).removeClass(prev.house);
+          $(res[0]).removeClass("shadow");
           modifyObject(element.house, element.player, element.pieceNmuber);
           resetPieceCount(element);
-          addPieceBackToHouse(getOccupiedDetails(prevOccupier));
-          return resetPieceCount(getOccupiedDetails(prevOccupier));
+          addPieceBackToHouse(prev);
+          return resetPieceCount(prev);
         }
 
         var text = prepareDropdown(dropdownArray, element, indexCount);
@@ -279,21 +286,15 @@ function cellSanitizer() {
   let obj = {};
   localStorage.removeItem("occupiers");
   cells.forEach((data, index) => {
-    if ($(data).hasClass(arrHouse[0]) && $(data).hasClass("shadow")) {
-      $(data).removeClass(arrHouse[0]);
-      $(data).removeClass("shadow");
-    }
-    if ($(data).hasClass(arrHouse[1]) && $(data).hasClass("shadow")) {
-      $(data).removeClass(arrHouse[1]);
-      $(data).removeClass("shadow");
-    }
-    if ($(data).hasClass(arrHouse[2]) && $(data).hasClass("shadow")) {
-      $(data).removeClass(arrHouse[2]);
-      $(data).removeClass("shadow");
-    }
-    if ($(data).hasClass(arrHouse[3]) && $(data).hasClass("shadow")) {
-      $(data).removeClass(arrHouse[3]);
-      $(data).removeClass("shadow");
+    for (let i = 0; i < arrHouse.length; i++) {
+      if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("shadow")) {
+        $(data).removeClass(arrHouse[i]);
+        $(data).removeClass("shadow");
+      }
+      if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("dropdown")) {
+        $(data).removeClass(arrHouse[i]);
+        $(data).removeClass("dropdown");
+      }
     }
     data.innerHTML = "";
     data.dataset.player = "";
@@ -374,10 +375,24 @@ function goHouse(element) {
       }
       return +cell.dataset[houseCode] == element.count;
     });
-    if (res[0].dataset.occupiedHouse) {
-      if (res[0].dataset.occupiedHouse == element.house) {
-        res[0].innerHTML = 2;
-      }
+    let currentOccupier = element.pieceNmuber + "-" + element.house;
+    if (res[0].dataset.occupier && res[0].dataset.occupier != currentOccupier) {
+      prevOccupier = res[0].dataset.occupier;
+      dropdownArray = storeOcuppiers(
+        prevOccupier,
+        currentOccupier,
+        element.count
+      );
+      var text = prepareDropdown(dropdownArray, element, element.count);
+      let frame = `<div class="dropdown-content">
+      
+      ${text}
+     
+       </div>`;
+      res[0].innerHTML = frame;
+      $(res[0]).addClass("dropdown");
+      //  console.log(arr)
+      localStorage.setItem("occupiers", JSON.stringify(dropdownArray));
     }
     if ($(res[0]).hasClass(element.house)) {
       $(res[0]).removeClass("shadow");
@@ -456,6 +471,7 @@ function getHouseCode(element) {
 }
 
 function clearAllSelected() {
+  // $("*").removeClass("selected");
   let squares = Array.from($(".square"));
   let cells = Array.from($(".cells"));
   let dropCells = Array.from($(".celldrop"));
@@ -480,5 +496,61 @@ function clearAllSelected() {
       $(cells).unbind();
       $(cells).removeClass("selected");
     }
+  }
+}
+
+function storeOutsidePiece(element) {
+  let arr = JSON.parse(localStorage.getItem("outsidePiece"));
+}
+
+///DICE
+
+function rollDice() {
+  let arr = [];
+  let ran;
+  const dice = [...document.querySelectorAll(".die-list")];
+  dice.forEach((die) => {
+    toggleClasses(die);
+    ran = getRandomNumber(1, 6);
+    die.dataset.roll = ran;
+    arr.push(ran);
+  });
+  return arr;
+}
+
+function toggleClasses(die) {
+  die.classList.toggle("odd-roll");
+  die.classList.toggle("even-roll");
+}
+
+function getRandomNumber(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function displayDiceResult(arr) {
+  if (arr) {
+    const rolls = [...document.querySelectorAll(".rolls")];
+    rolls.forEach((roll, index) => {
+      roll.textContent = arr[index];
+    });
+  }
+}
+function clearSelectedRoll() {
+  let cells = Array.from($(".rolls"));
+  cells.forEach((cell) => {
+    $(cell).removeClass("selected");
+  });
+}
+
+function selectRoll() {
+  clearSelectedRoll();
+  let selected = event.target;
+  let selectedCount;
+  $(selected).addClass("selected");
+  selectedCount = +selected.textContent;
+  if (selectedCount) {
+    return selectedCount;
   }
 }

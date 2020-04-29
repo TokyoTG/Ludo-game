@@ -27,8 +27,8 @@
       <h4>Create Room</h4>
       <p>All fields are required</p>
       <p>
-        <label for="player-name">Player Name</label><br>
-        <input type="text" name="player-name" id="player-name" required>
+        <label for="creator-name">Player Name</label><br>
+        <input type="text" name="creator-name" id="creator-name" required>
       </p>
       <p>
         <label for="room-name">Room Name</label><br>
@@ -60,17 +60,18 @@
   <script src="./index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
-    if (localStorage.getItem('roomObj')) {
-      location.replace('game.html')
-    }
+    // if (localStorage.getItem('roomObj')) {
+    //   location.replace('game.html')
+    // }
 
 
     var socket = io();
     let roomObj;
 
     //creates a new room
-    $("#create").submit(function () {
-      let playerName = $("#player-name").val();
+    $("#create").submit(function (e) {
+      e.preventDefault()
+      let playerName = $("#creator-name").val();
       let roomName = $("#room-name").val()
       roomObj = {
         name: roomName,
@@ -84,6 +85,7 @@
       storePiece();
       localStorage.setItem('roomObj', JSON.stringify(roomObj))
       socket.emit('create_room', roomObj);
+      location.assign('./game.html');
     })
 
 
@@ -125,7 +127,8 @@
     }
 
 
-    $("#join").submit(function () {
+    $("#join").submit(function (e) {
+      e.preventDefault()
       let playerName = $("#player-name").val();
       let roomId = $("#room-id").val()
       for (let item of rooms) {
@@ -134,6 +137,7 @@
           item.playerName = playerName;
           socket.emit('updateRoom', item);
           localStorage.setItem('roomObj', JSON.stringify(item))
+          location.assign('./game.html')
         }
       }
     })

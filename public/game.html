@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dice2.css">
     <title>Document</title>
 </head>
 
@@ -35,12 +37,6 @@
 
         </div>
         <div class="cells g-starts dropdown" style="top: 40%;left:6.66%;" data-index="0">
-            M<div class="dropdown-content">
-                <a class="red"></a>
-                <a class="green"></a>
-                <a class="blue"></a>
-                <a class="yellow"></a>
-            </div>
         </div>
         <div class="cells" style="top: 40%;left:13.32%;" data-index="1">
 
@@ -129,31 +125,129 @@
 
     </div>
 
+    <div class="dice">
+        <ol class="die-list even-roll" data-roll="1" id="die-1">
+            <li class="die-item" data-side="1">
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="2">
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="3">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="4">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="5">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="6">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+        </ol>
+        <ol class="die-list odd-roll" data-roll="1" id="die-2">
+            <li class="die-item" data-side="1">
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="2">
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="3">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="4">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="5">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+            <li class="die-item" data-side="6">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </li>
+        </ol>
+    </div>
     <div>
         <button id="count">Count seed</button>
         <button id="quit">Exit Room</button>
+        <button type="button" id="roll-button">Roll Dice</button>
+        <p id="roll1" class="rolls">0</p>
+        <p id="roll1" class="rolls">0</p>
+    </div>
+    <div>
+
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="./index.js"></script>
     <script>
+        // if (localStorage.getItem('roomObj') == '') {
+        //     location.replace('index.html')
+        // }
+        let rollResult, selectedCount;
+
+        document.getElementById("roll-button").addEventListener("click", function () {
+            clearAllSelected()
+            clearSelectedRoll();
+            rollResult = rollDice()
+            setTimeout(function () {
+                displayDiceResult(rollResult)
+            }, 1500)
+        });
+
+        $(".rolls").click(function () {
+            selectedCount = selectRoll()
+        })
         let roomList;
-        if (localStorage.getItem('roomObj') == '') {
-            location.replace('index.html')
-        }
+
+
+
         let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
         var socket = io();
         $(document).ready(function () {
             seedDisplay(objectRetriever());
             displayOntheMove(collateCount());
-
         })
 
         $("#count").click(function (e) {
             let selected = localStorage.getItem("selected");
-            increasePieceCount(6, selected);
-            clearAllSelected();
-            localStorage.setItem("selected", "");
+            if (selected && selectedCount) {
+                increasePieceCount(selectedCount, selected);
+                clearAllSelected();
+                selectedCount = 0;
+                localStorage.setItem("selected", "");
+            }
+
         });
 
         socket.on('rooms', function (data) {
