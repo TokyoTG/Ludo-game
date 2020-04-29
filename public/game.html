@@ -149,6 +149,13 @@
 
         })
 
+        $("#count").click(function (e) {
+            let selected = localStorage.getItem("selected");
+            increasePieceCount(6, selected);
+            clearAllSelected();
+            localStorage.setItem("selected", "");
+        });
+
         socket.on('rooms', function (data) {
             roomList = data
             console.log(data);

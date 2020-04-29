@@ -57,11 +57,14 @@
     <a href="dice2.html">Dice2</a>
   </div>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="./index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
     if (localStorage.getItem('roomObj')) {
       location.replace('game.html')
     }
+
+
     var socket = io();
     let roomObj;
 
@@ -76,6 +79,9 @@
         numberOfPlayers: 1,
         playerName: playerName,
       }
+      localStorage.clear();
+      objectSetter(2);
+      storePiece();
       localStorage.setItem('roomObj', JSON.stringify(roomObj))
       socket.emit('create_room', roomObj);
     })
