@@ -4,7 +4,8 @@ const app = require("express")();
 const express = require("express");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-let clientPath = `../public`;
+let clientPath = __dirname + `/../public`;
+// console.log(clientPath);
 app.use(express.static(clientPath));
 
 const PORT = process.env.PORT || 3000;
