@@ -130,7 +130,7 @@ function select() {
 }
 $("#count").click(function (e) {
   let selected = localStorage.getItem('selected');
-   increasePieceCount(6, selected);
+   increasePieceCount(6, selected); 
  clearAllSelected()
   localStorage.setItem('selected','');
 });
