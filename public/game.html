@@ -201,8 +201,8 @@
         <button id="count">Count seed</button>
         <button id="quit">Exit Room</button>
         <button type="button" id="roll-button">Roll Dice</button>
-        <p id="roll1" class="rolls">0</p>
-        <p id="roll1" class="rolls">0</p>
+        <p class="rolls">0</p>
+        <p class="rolls">0</p>
     </div>
     <div>
 
@@ -214,7 +214,7 @@
         // if (localStorage.getItem('roomObj') == '') {
         //     location.replace('index.html')
         // }
-        let rollResult, selectedCount;
+        let rollResult, selectedCount, selectedRoll;
 
         document.getElementById("roll-button").addEventListener("click", function () {
             clearAllSelected()
@@ -226,6 +226,7 @@
         });
 
         $(".rolls").click(function () {
+            selectedRoll = event.target;
             selectedCount = selectRoll()
         })
         let roomList;
@@ -243,8 +244,10 @@
             let selected = localStorage.getItem("selected");
             if (selected && selectedCount) {
                 increasePieceCount(selectedCount, selected);
+                clearSelectedRoll();
                 clearAllSelected();
                 selectedCount = 0;
+                selectedRoll.textContent = 0;
                 localStorage.setItem("selected", "");
             }
 
