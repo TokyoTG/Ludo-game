@@ -155,12 +155,16 @@ function increasePieceCount(num, code) {
   //increases the piece count base on the number passed as argument
   // let code = pieceNmuber + "-" + house;
   let seedDetails = JSON.parse(localStorage.getItem(code));
+  if (seedDetails.count == 0 && num != 6) {
+    return false;
+  }
   if (seedDetails.count + num <= 62) {
     seedDetails.count += num;
   }
 
   localStorage.setItem(code, JSON.stringify(seedDetails));
   displayOntheMove(collateCount(seedDetails.house));
+  return true;
 }
 
 function getClassList(element) {

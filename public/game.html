@@ -243,11 +243,13 @@
         $("#count").click(function (e) {
             let selected = localStorage.getItem("selected");
             if (selected && selectedCount) {
-                increasePieceCount(selectedCount, selected);
+                let pieceCount = increasePieceCount(selectedCount, selected);
                 clearSelectedRoll();
                 clearAllSelected();
-                selectedCount = 0;
-                selectedRoll.textContent = 0;
+                if (pieceCount) {
+                    selectedCount = 0;
+                    selectedRoll.textContent = 0;
+                }
                 localStorage.setItem("selected", "");
             }
 
