@@ -233,7 +233,7 @@
 
 
 
-        let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
+        // let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
         var socket = io();
         $(document).ready(function () {
             seedDisplay(objectRetriever());
@@ -253,27 +253,27 @@
 
         });
 
-        socket.on('rooms', function (data) {
-            roomList = data
-            console.log(data);
-        })
+        // socket.on('rooms', function (data) {
+        //     roomList = data
+        //     console.log(data);
+        // })
 
-        // console.log(playerRoom);
-        $("#quit").click(function () {
-            // socket.rooms.leave()
-            playerRoom.numberOfPlayers -= 1
-            localStorage.setItem('roomObj', '');
-            socket.emit('updateRoom', playerRoom);
-            location.assign('index.html')
-        })
-        // console.log(socket.rooms);
-        socket.emit('game', playerRoom)
-        socket.on("user", function (data) {
-            console.log(data)
-        })
-        socket.on("new_user", function (data) {
-            console.log(data)
-        })
+        // // console.log(playerRoom);
+        // $("#quit").click(function () {
+        //     // socket.rooms.leave()
+        //     playerRoom.numberOfPlayers -= 1
+        //     localStorage.setItem('roomObj', '');
+        //     socket.emit('updateRoom', playerRoom);
+        //     location.assign('index.html')
+        // })
+        // // console.log(socket.rooms);
+        // socket.emit('game', playerRoom)
+        // socket.on("user", function (data) {
+        //     console.log(data)
+        // })
+        // socket.on("new_user", function (data) {
+        //     console.log(data)
+        // })
     </script>
 </body>
 
