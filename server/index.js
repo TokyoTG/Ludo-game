@@ -28,6 +28,7 @@ io.on("connection", (socket) => {
     // else {
     //   roomList.splice(roomList.indexOf(data), 1);
     // }
+
     console.log(roomList);
   });
   //sends out the room object
@@ -53,7 +54,7 @@ io.on("connection", (socket) => {
   });
   socket.on("rolldice", function (data) {
     console.log(data);
-    io.to(data.name).emit("roll", data.name);
+    io.to(data.name).emit("roll", lib.getRandomNumber(1, 6));
   });
   socket.on("disconnect", function () {
     console.log("user disconnected");
