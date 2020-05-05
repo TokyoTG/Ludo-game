@@ -600,3 +600,24 @@ function displayOutsidePiece() {
   playerOne.innerHTML = playerOneText;
   playerTwo.innerHTML = playerTwoText;
 }
+
+function rollsDice() {
+  clearAllSelected();
+  clearSelectedRoll();
+  rollResult = rollDice();
+  setTimeout(function () {
+    displayDiceResult(rollResult);
+  }, 1500);
+  disableRoll(event.target);
+}
+
+//multi-player
+
+function disableRoll(element) {
+  element.setAttribute("onclick", "");
+}
+
+function is_your_turn() {
+  let rollBtn = document.getElementById("roll-button");
+  rollBtn.setAttribute("onclick", "rollsDice()");
+}

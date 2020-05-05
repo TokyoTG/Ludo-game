@@ -200,7 +200,8 @@
     <div>
         <button id="count">Count seed</button>
         <button id="quit">Exit Room</button>
-        <button type="button" id="roll-button">Roll Dice</button>
+        <button id="reset">Reset Game</button>
+        <button type="button" id="roll-button" onclick="rollsDice()">Roll Dice</button>
         <p class="rolls">0</p>
         <p class="rolls">0</p>
     </div>
@@ -219,14 +220,6 @@
         // }
         let rollResult, selectedCount, selectedRoll;
         displayOutsidePiece();
-        document.getElementById("roll-button").addEventListener("click", function () {
-            clearAllSelected()
-            clearSelectedRoll();
-            rollResult = rollDice()
-            setTimeout(function () {
-                displayDiceResult(rollResult)
-            }, 1500)
-        });
 
         $(".rolls").click(function () {
             selectedRoll = event.target;
@@ -254,6 +247,14 @@
             }
 
         });
+
+        $("#reset").click(function (e) {
+            e.preventDefault();
+            let confirmation = window.confirm('Are You sure');
+            if (confirmation) {
+                resetAll()
+            }
+        })
 
         // socket.on('rooms', function (data) {
         //     roomList = data
