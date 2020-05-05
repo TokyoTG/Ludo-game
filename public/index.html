@@ -60,9 +60,9 @@
   <script src="./index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
-    // if (localStorage.getItem('roomObj')) {
-    //   location.replace('game.html')
-    // }
+    if (localStorage.getItem('roomObj')) {
+      location.replace('game.html')
+    }
 
     //should be removed when working on multiplayer
 
@@ -123,7 +123,7 @@
         '1', 'z', 'w', 0
       ];
 
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 10; i++) {
         index = Math.floor(Math.random() * alphabets.length - 1) + 1;
         roomId
           += alphabets[index];

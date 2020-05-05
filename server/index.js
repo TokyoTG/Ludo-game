@@ -21,13 +21,12 @@ io.on("connection", (socket) => {
 
   //updates the number of player in a room
   socket.on("updateRoom", (data) => {
-    // if (data.numberOfplayers > 0) {
-    roomList.splice(roomList.indexOf(data), 1);
-    roomList.push(data);
-    // }
-    // else {
-    //   roomList.splice(roomList.indexOf(data), 1);
-    // }
+    if (data.numberOfplayers > 0) {
+      roomList.splice(roomList.indexOf(data), 1);
+      roomList.push(data);
+    } else {
+      roomList.splice(roomList.indexOf(data), 1);
+    }
     console.log(roomList);
   });
   //sends out the room object
@@ -50,6 +49,10 @@ io.on("connection", (socket) => {
     setTimeout(function () {
       clearInterval(v);
     }, 2500);
+  });
+  socket.on("rolldice", function (data) {
+    console.log(data);
+    io.to(data.name).emit("roll", data.name);
   });
   socket.on("disconnect", function () {
     console.log("user disconnected");

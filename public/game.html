@@ -215,9 +215,9 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="./index.js"></script>
     <script>
-        // if (localStorage.getItem('roomObj') == '') {
-        //     location.replace('index.html')
-        // }
+        if (localStorage.getItem('roomObj') == '') {
+            location.replace('index.html')
+        }
         let rollResult, selectedCount, selectedRoll;
         displayOutsidePiece();
 
@@ -226,7 +226,7 @@
             selectedCount = selectRoll()
         })
         let roomList;
-        // let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
+        let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
         var socket = io();
         $(document).ready(function () {
             seedDisplay(objectRetriever());
@@ -245,7 +245,6 @@
                 }
                 localStorage.setItem("selected", "");
             }
-
         });
 
         $("#reset").click(function (e) {
@@ -256,27 +255,40 @@
             }
         })
 
-        // socket.on('rooms', function (data) {
-        //     roomList = data
-        //     console.log(data);
-        // })
+        socket.on('rooms', function (data) {
+            roomList = data
+            console.log(data);
+        })
+        socket.on('roll', function (data) {
+            // console.log(data)
+            clearAllSelected();
+            clearSelectedRoll();
+            rollResult = rollDice();
+            setTimeout(function () {
+                displayDiceResult(rollResult);
+            }, 1500);
+            disableRoll();
+        })
+        console.log(playerRoom);
+        $("#quit").click(function () {
+            // socket.rooms.leave()
+            playerRoom.numberOfPlayers -= 1
+            localStorage.setItem('roomObj', '');
+            socket.emit('updateRoom', playerRoom);
+            location.assign('index.html')
+        })
 
-        // // console.log(playerRoom);
-        // $("#quit").click(function () {
-        //     // socket.rooms.leave()
-        //     playerRoom.numberOfPlayers -= 1
-        //     localStorage.setItem('roomObj', '');
-        //     socket.emit('updateRoom', playerRoom);
-        //     location.assign('index.html')
-        // })
-        // // console.log(socket.rooms);
-        // socket.emit('game', playerRoom)
-        // socket.on("user", function (data) {
-        //     console.log(data)
-        // })
-        // socket.on("new_user", function (data) {
-        //     console.log(data)
-        // })
+        function rollsDice() {
+            socket.emit('rolldice', playerRoom);
+        }
+        // console.log(socket.rooms);
+        socket.emit('game', playerRoom)
+        socket.on("user", function (data) {
+            console.log(data)
+        })
+        socket.on("new_user", function (data) {
+            console.log(data)
+        })
     </script>
 </body>
 

@@ -601,20 +601,22 @@ function displayOutsidePiece() {
   playerTwo.innerHTML = playerTwoText;
 }
 
-function rollsDice() {
-  clearAllSelected();
-  clearSelectedRoll();
-  rollResult = rollDice();
-  setTimeout(function () {
-    displayDiceResult(rollResult);
-  }, 1500);
-  disableRoll(event.target);
-}
+// function rollsDice() {
+//   socket.emit('rolldice)
+//   // clearAllSelected();
+//   // clearSelectedRoll();
+//   // rollResult = rollDice();
+//   // setTimeout(function () {
+//   //   displayDiceResult(rollResult);
+//   // }, 1500);
+//   // disableRoll(event.target);
+// }
 
 //multi-player
 
-function disableRoll(element) {
-  element.setAttribute("onclick", "");
+function disableRoll() {
+  let rollBtn = document.getElementById("roll-button");
+  rollBtn.setAttribute("onclick", "");
 }
 
 function is_your_turn() {
