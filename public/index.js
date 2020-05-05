@@ -10,6 +10,7 @@ function objectSetter(num) {
     // create two player objects
     playerOneObject = {
       player: "one",
+      outPiece: [],
       pieceDetails: [
         {
           house: "green",
@@ -34,6 +35,7 @@ function objectSetter(num) {
 
     playerTwoObject = {
       player: "two",
+      outPiece: [],
       pieceDetails: [
         {
           house: "red",
@@ -164,6 +166,7 @@ function increasePieceCount(num, code) {
 
   localStorage.setItem(code, JSON.stringify(seedDetails));
   displayOntheMove(collateCount(seedDetails.house));
+  displayOntheMove(collateCount(seedDetails.house));
   return true;
 }
 
@@ -236,6 +239,8 @@ function getClassList(element) {
           modifyObject(element.house, element.player, element.pieceNmuber);
           resetPieceCount(element);
           addPieceBackToHouse(prev);
+          addToOutside(element.player, element.house);
+
           return resetPieceCount(prev);
         }
 
@@ -292,8 +297,10 @@ function cellSanitizer() {
   cells.forEach((data, index) => {
     for (let i = 0; i < arrHouse.length; i++) {
       if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("shadow")) {
-        $(data).removeClass(arrHouse[i]);
         $(data).removeClass("shadow");
+        if (!$(data).hasClass("houses")) {
+          $(data).removeClass(arrHouse[i]);
+        }
       }
       if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("dropdown")) {
         $(data).removeClass(arrHouse[i]);
@@ -557,4 +564,37 @@ function selectRoll() {
   if (selectedCount) {
     return selectedCount;
   }
+}
+
+function addToOutside(player, house) {
+  let objects = objectRetriever();
+  for (let object of objects) {
+    if (player == object.player) {
+      object.outPiece.push(house);
+    }
+  }
+  storePlayerObjects(...objects);
+  displayOutsidePiece();
+}
+
+function displayOutsidePiece() {
+  let arr = objectRetriever();
+  let playerOne = document.getElementById("playerOne");
+  let playerOneText = "";
+  let playerTwoText = "";
+  let playerTwo = document.getElementById("playerTwo");
+  for (let item of arr) {
+    if ("one" == item.player) {
+      item.outPiece.forEach((element) => {
+        playerOneText += `<p class=" out ${element}"></p>`;
+      });
+    }
+    if ("two" == item.player) {
+      item.outPiece.forEach((element) => {
+        playerTwoText += `<p class=" out ${element}"></p>`;
+      });
+    }
+  }
+  playerOne.innerHTML = playerOneText;
+  playerTwo.innerHTML = playerTwoText;
 }
