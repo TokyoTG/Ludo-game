@@ -1,143 +1,142 @@
-module.exports ={
+module.exports = {
   generateRandom() {
-        let arr = []
-        let num1, num2;
-        num1 = Math.floor(Math.random() * 6) + 1;
-        num2 = Math.floor(Math.random() * 6) + 1;
-        arr = [num1, num2];
-        return arr;
-    },
+    let arr = [];
+    let num1, num2;
+    num1 = Math.floor(Math.random() * 6) + 1;
+    num2 = Math.floor(Math.random() * 6) + 1;
+    arr = [num1, num2];
+    return arr;
+  },
 
-    objectSetter(num) {
-        //declare variable
-        let houseNum, playerOneObject, playerTwoObject;
-        //check if the number of players are more than 2
-        if (num > 2) {
-          houseNum = 4;
-        } else {
-          // create two player objects
-          playerOneObject = {
-            player: "one",
-            pieceDetails: [
-              {
-                house: "green",
-                pieceNmuber: [
-                  "square-one",
-                  "square-two",
-                  "square-three",
-                  "square-four",
-                ],
-              },
-              {
-                house: "yellow",
-                pieceNmuber: [
-                  "square-one",
-                  "square-two",
-                  "square-three",
-                  "square-four",
-                ],
-              },
+  objectSetter(num) {
+    //declare variable
+    let houseNum, playerOneObject, playerTwoObject;
+    //check if the number of players are more than 2
+    if (num > 2) {
+      houseNum = 4;
+    } else {
+      // create two player objects
+      playerOneObject = {
+        player: "one",
+        pieceDetails: [
+          {
+            house: "green",
+            pieceNmuber: [
+              "square-one",
+              "square-two",
+              "square-three",
+              "square-four",
             ],
-          };
-      
-          playerTwoObject = {
-            player: "two",
-            pieceDetails: [
-              {
-                house: "red",
-                pieceNmuber: [
-                  "square-one",
-                  "square-two",
-                  "square-three",
-                  "square-four",
-                ],
-              },
-              {
-                house: "blue",
-                pieceNmuber: [
-                  "square-one",
-                  "square-two",
-                  "square-three",
-                  "square-four",
-                ],
-              },
+          },
+          {
+            house: "yellow",
+            pieceNmuber: [
+              "square-one",
+              "square-two",
+              "square-three",
+              "square-four",
             ],
-          };
-      
-          //Stores the object in localstorage
-          this.storePlayerObjects(playerOneObject, playerTwoObject);
-        }
-      },
+          },
+        ],
+      };
 
+      playerTwoObject = {
+        player: "two",
+        pieceDetails: [
+          {
+            house: "red",
+            pieceNmuber: [
+              "square-one",
+              "square-two",
+              "square-three",
+              "square-four",
+            ],
+          },
+          {
+            house: "blue",
+            pieceNmuber: [
+              "square-one",
+              "square-two",
+              "square-three",
+              "square-four",
+            ],
+          },
+        ],
+      };
 
-     storePlayerObjects(obj1, obj2) {
-        localStorage.setItem("playerOne", JSON.stringify(obj1));
-        localStorage.setItem("playerTwo", JSON.stringify(obj2));
-      },
+      //Stores the object in localstorage
+      this.storePlayerObjects(playerOneObject, playerTwoObject);
+    }
+  },
 
-    modifyObject(house, player, pieceNmuber) {
-        //assigns objects to array of player objects returned by objectRetriever
-        let objects = this.objectRetriever();
-        let index;
-        //loop through objects to check the player and house to modify
-        for (let object of objects) {
-          if (player == object.player) {
-            for (let item of object.pieceDetails) {
-              if (item.house == house && item.pieceNmuber.includes(pieceNmuber)) {
-                index = item.pieceNmuber.indexOf(pieceNmuber);
-                item.pieceNmuber.splice(index, 1);
-              }
-            }
+  storePlayerObjects(obj1, obj2) {
+    localStorage.setItem("playerOne", JSON.stringify(obj1));
+    localStorage.setItem("playerTwo", JSON.stringify(obj2));
+  },
+
+  modifyObject(house, player, pieceNmuber) {
+    //assigns objects to array of player objects returned by objectRetriever
+    let objects = this.objectRetriever();
+    let index;
+    //loop through objects to check the player and house to modify
+    for (let object of objects) {
+      if (player == object.player) {
+        for (let item of object.pieceDetails) {
+          if (item.house == house && item.pieceNmuber.includes(pieceNmuber)) {
+            index = item.pieceNmuber.indexOf(pieceNmuber);
+            item.pieceNmuber.splice(index, 1);
           }
         }
-        this.storePlayerObjects(...objects);
-        this.seedDisplay(this.objectRetriever());
-      },
+      }
+    }
+    this.storePlayerObjects(...objects);
+    this.seedDisplay(this.objectRetriever());
+  },
 
-     objectRetriever() {
-        // retrieves player objects
-        let p1NumOfSeeds = JSON.parse(localStorage.getItem("playerOne"));
-        let p2NumOfSeeds = JSON.parse(localStorage.getItem("playerTwo"));
-        return [p1NumOfSeeds, p2NumOfSeeds];
-      },
-      
-    seedDisplay(obj) {
-        //loop through the passed array of player objects
-        for (let element of obj) {
-          for (let item of element.pieceDetails) {
-            $(`#${item.house}`).html("");
-            for (let piece of item.pieceNmuber) {
-              $(`#${item.house}`).append(
-                `<div class="square ${piece} ${item.house}" onclick="select()"></div>`
-              );
-            }
-          }
-        }
-      },
+  objectRetriever() {
+    // retrieves player objects
+    let p1NumOfSeeds = JSON.parse(localStorage.getItem("playerOne"));
+    let p2NumOfSeeds = JSON.parse(localStorage.getItem("playerTwo"));
+    return [p1NumOfSeeds, p2NumOfSeeds];
+  },
 
-lookUpRandomNumber(num1, num2) {
-        let arr = [];
-        let diceObject = {
-            'six': 6,
-            'five': 5,
-            'four': 4,
-            'three': 3,
-            'two': 2,
-            'one': 1
+  seedDisplay(obj) {
+    //loop through the passed array of player objects
+    for (let element of obj) {
+      for (let item of element.pieceDetails) {
+        $(`#${item.house}`).html("");
+        for (let piece of item.pieceNmuber) {
+          $(`#${item.house}`).append(
+            `<div class="square ${piece} ${item.house}" onclick="select()"></div>`
+          );
         }
-        for (let key in diceObject) {
-            if (diceObject[key] === num1) {
-                arr.push(key);
-            }
-            if (diceObject[key] == num2) {
-                arr.push(key);
-            }
-        }
+      }
+    }
+  },
 
-        return arr;
-    },
-    /// Selector
-select() {
+  lookUpRandomNumber(num1, num2) {
+    let arr = [];
+    let diceObject = {
+      six: 6,
+      five: 5,
+      four: 4,
+      three: 3,
+      two: 2,
+      one: 1,
+    };
+    for (let key in diceObject) {
+      if (diceObject[key] === num1) {
+        arr.push(key);
+      }
+      if (diceObject[key] == num2) {
+        arr.push(key);
+      }
+    }
+
+    return arr;
+  },
+  /// Selector
+  select() {
     //gets all squares
     let arr;
     let squares = Array.from($(".square"));
@@ -146,34 +145,32 @@ select() {
       //removes selected class from squares with selected class
       if ($(square).hasClass("selected")) {
         $(square).removeClass("selected");
-        $(square).unbind()
+        $(square).unbind();
       }
-      
     }
     for (let cell of cells) {
       //removes selected class from squares with selected class
       if ($(cell).hasClass("selected")) {
-        $(cell).unbind()
+        $(cell).unbind();
         $(cell).removeClass("selected");
       }
-      
     }
     let element = $(event.target);
     let res;
     // add selected class to the clicked square
     $(event.target).addClass("selected");
     arr = Array.from(event.target.classList);
-    if(arr.includes('shadow')){
+    if (arr.includes("shadow")) {
       res = event.target.dataset.occupier;
-    }else{
-        res = arr[1]+"-"+arr[2];
+    } else {
+      res = arr[1] + "-" + arr[2];
     }
-    localStorage.setItem('selected',res);
+    localStorage.setItem("selected", res);
     return res;
   },
 
   //Store Moving Seed Properties
-storePiece() {
+  storePiece() {
     //stores an array of piece details in the localstorage
     let gameObject = this.objectRetriever();
     let obj;
@@ -193,13 +190,17 @@ storePiece() {
     }
   },
 
- getClassList(element) {
+  getClassList(element) {
     var prevOccupier;
-   //check if the piece count as is enough to remove the piece from the game
-    if(element.count == 62){
-      return this.modifyObject(element.house,element.player,element.pieceNmuber)
+    //check if the piece count as is enough to remove the piece from the game
+    if (element.count == 62) {
+      return this.modifyObject(
+        element.house,
+        element.player,
+        element.pieceNmuber
+      );
     }
-  // handles the house going part of the game
+    // handles the house going part of the game
     this.goHouse(element);
     if (element.count >= 6) {
       //removes the traditional six from the piece count
@@ -220,7 +221,7 @@ storePiece() {
           houseCode = "y-starts";
           break;
       }
-  
+
       let arr = ["green", "blue", "red", "yellow"];
       let cells = Array.from($(".cells"));
       //filters the house going cells
@@ -229,21 +230,20 @@ storePiece() {
           return element;
         }
       });
-     
+
       //returns the starting  element of the house
       let indexCount = cells.filter((element, index) => {
         if (Array.from(element.classList).includes(houseCode)) {
           return element;
         }
       });
-      filtered.forEach(data=>{
-        if($(data).hasClass(element.house) && $(data).hasClass('shadow')){
+      filtered.forEach((data) => {
+        if ($(data).hasClass(element.house) && $(data).hasClass("shadow")) {
           $(data).removeClass(element.house);
-          $(data).removeClass('shadow');
+          $(data).removeClass("shadow");
         }
-      
-      })
-    
+      });
+
       // calculates the index the seed is going to be.
       indexCount = element.count + +indexCount[0].dataset.index;
       let res = filtered.filter((cell) => {
@@ -253,11 +253,14 @@ storePiece() {
           indexCount -= filtered.length;
         }
         //returns the element at the piece index
-  
+
         return +cell.dataset.index == indexCount;
       });
-  //check if the cell is occupied and stores the occupier details in variable
-      if (res[0].dataset.occupier && res[0].dataset.occupier != element.pieceNmuber + "-" + element.house ) {
+      //check if the cell is occupied and stores the occupier details in variable
+      if (
+        res[0].dataset.occupier &&
+        res[0].dataset.occupier != element.pieceNmuber + "-" + element.house
+      ) {
         // if(res[0].hasClass(element.house)){
         //   $(res[0]).addClass(element.house);
         //   $(res[0]).addClass("shadow");
@@ -266,9 +269,9 @@ storePiece() {
         //check if the previous occupier player is the same as the current piece
         if (res[0].dataset.player == element.player) {
           res[0].innerHTML = 2;
-          // res[0].dataset.occupier =  prevOccupier+  " " + element.pieceNmuber   
+          // res[0].dataset.occupier =  prevOccupier+  " " + element.pieceNmuber
         } else {
-          //return the piece back home if its another house 
+          //return the piece back home if its another house
           this.modifyObject(element.house, element.player, element.pieceNmuber);
           this.resetPieceCount(element);
           this.addPieceBackToHouse(this.getOccupiedDetails(prevOccupier));
@@ -276,12 +279,10 @@ storePiece() {
         }
       }
       //adds the appropriate class to piece
-        $(res[0]).addClass(element.house,'shadow');
-        $(res[0]).addClass("shadow");
-     
-   
-     
-      res[0].setAttribute('onclick','select()');
+      $(res[0]).addClass(element.house, "shadow");
+      $(res[0]).addClass("shadow");
+
+      res[0].setAttribute("onclick", "select()");
       res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
       res[0].dataset.player = element.player;
       //removes piece from inside house
@@ -306,33 +307,30 @@ storePiece() {
 
   displayOntheMove(arr) {
     //display all piece that are on the move
-      arr.forEach((element) => {
-        this.getClassList(element);
-        
-      });
-    },
+    arr.forEach((element) => {
+      this.getClassList(element);
+    });
+  },
 
-
- increasePieceCount(num, code) {
+  increasePieceCount(num, code) {
     //increases the piece count base on the number passed as argument
     // let code = pieceNmuber + "-" + house;
     let seedDetails = JSON.parse(localStorage.getItem(code));
-    if(seedDetails.count + num <= 62){
-  seedDetails.count += num;
+    if (seedDetails.count + num <= 62) {
+      seedDetails.count += num;
     }
-    
+
     localStorage.setItem(code, JSON.stringify(seedDetails));
     this.displayOntheMove(this.collateCount());
   },
 
-getOccupiedDetails(str) {
+  getOccupiedDetails(str) {
     //To be converted to return an array of objects
     //gets the details of the piece that currently occupies a cell
     return JSON.parse(localStorage.getItem(str));
   },
 
-
-resetPieceCount(element) {
+  resetPieceCount(element) {
     //resets the count of a piece to zero when the occupied piece player is different
     let code = element.pieceNmuber + "-" + element.house;
     let seedDetails = JSON.parse(localStorage.getItem(code));
@@ -341,7 +339,7 @@ resetPieceCount(element) {
     // addPieceBackToHouse(element);
   },
 
- addPieceBackToHouse(element) {
+  addPieceBackToHouse(element) {
     // adds the piece back to house when the occupied piece player is different
     let objects = this.objectRetriever();
     for (let object of objects) {
@@ -357,12 +355,11 @@ resetPieceCount(element) {
     this.seedDisplay(this.objectRetriever());
   },
 
-
-goHouse(element) {
+  goHouse(element) {
     //handles the house going count;
     if (element.count >= 57) {
       element.count -= 57;
-  
+
       let houseCode;
       switch (element.house) {
         case "green":
@@ -387,7 +384,7 @@ goHouse(element) {
       let res = filtered.filter((cell) => {
         if ($(cell).hasClass(element.house)) {
           $(cell).removeClass("shadow");
-        }    
+        }
         return +cell.dataset[houseCode] == element.count;
       });
       if (res[0].dataset.occupiedHouse) {
@@ -403,43 +400,50 @@ goHouse(element) {
       $(res[0]).addClass(element.house);
       res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
       res[0].dataset.occupiedHouse = element.house;
-      res[0].setAttribute('onclick','select()');
-    
+      res[0].setAttribute("onclick", "select()");
     }
   },
-  
-resetAll(){
+
+  resetAll() {
     //resets all counts and sets all seeds to default
-    this.objectSetter()
-    this.storePiece()
+    this.objectSetter();
+    this.storePiece();
     this.seedDisplay(this.objectRetriever());
     this.displayOntheMove(this.collateCount());
-    location.reload()
+    location.reload();
   },
 
+  removeSpinnerClass() {
+    setTimeout(function () {
+      $(".cube1").removeClass("cube1");
+      $(".cube2").removeClass("cube2");
+    }, 2000);
+  },
 
-removeSpinnerClass() {
-        setTimeout(function () {
-            $(".cube1").removeClass('cube1');
-            $(".cube2").removeClass('cube2');
-        }, 2000)
-    },
-
- displayNumbers(key1, key2) {
-        $("#cont").text('');
-        $("#cont").append(` <i class="fas fa-dice-${key1} cube1"></i>
+  displayNumbers(key1, key2) {
+    $("#cont").text("");
+    $("#cont").append(` <i class="fas fa-dice-${key1} cube1"></i>
         <i class="fas fa-dice-${key2} cube2"></i>`);
-    },
-rollDice(){
-    let display = this.displayNumbers(...this.lookUpRandomNumber(...this.generateRandom()));
+  },
+  rollDice() {
+    let display = this.displayNumbers(
+      ...this.lookUpRandomNumber(...this.generateRandom())
+    );
     var v = setInterval(function () {
-       display();
+      display();
     }, 500);
     setTimeout(function () {
-        clearInterval(v);
-    }, 2000)
-    
-   this.removeSpinnerClass()
-    console.log('rolled');
-}
-}
+      clearInterval(v);
+    }, 2000);
+
+    this.removeSpinnerClass();
+    console.log("rolled");
+  },
+  getRandomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    let ran1 = Math.floor(Math.random() * (max - min + 1)) + min;
+    let ran2 = Math.floor(Math.random() * (max - min + 1)) + min;
+    return [ran1, ran2];
+  },
+};
