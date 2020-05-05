@@ -53,7 +53,8 @@ io.on("connection", (socket) => {
     }, 2500);
   });
   socket.on("rolldice", function (data) {
-    console.log(data);
+    socket.emit("disableRoll", "disable");
+    socket.to(data.name).emit("your_turn", "roll");
     io.to(data.name).emit("roll", lib.getRandomNumber(1, 6));
   });
   socket.on("disconnect", function () {

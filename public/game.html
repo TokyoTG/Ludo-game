@@ -267,7 +267,12 @@
             setTimeout(function () {
                 displayDiceResult(rollResult);
             }, 1500);
+        })
+        socket.on('disableRoll', function () {
             disableRoll();
+        })
+        socket.on('your_turn', function () {
+            is_your_turn();
         })
         console.log(playerRoom);
         $("#quit").click(function () {
