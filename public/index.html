@@ -60,9 +60,9 @@
   <script src="./index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
-    if (localStorage.getItem('roomObj')) {
-      location.replace('game.html')
-    }
+    // if (localStorage.getItem('roomObj')) {
+    //   location.replace('game.html')
+    // }
 
     //should be removed when working on multiplayer
 
@@ -138,6 +138,7 @@
       let roomId = $("#room-id").val()
       for (let item of rooms) {
         if (item.id == roomId) {
+          console.log('ok');
           item.numberOfPlayers += 1;
           item.playerName = playerName;
           socket.emit('updateRoom', item);

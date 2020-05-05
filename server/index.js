@@ -21,12 +21,13 @@ io.on("connection", (socket) => {
 
   //updates the number of player in a room
   socket.on("updateRoom", (data) => {
-    if (data.numberOfplayers > 0) {
-      roomList.splice(roomList.indexOf(data), 1);
-      roomList.push(data);
-    } else {
-      roomList.splice(roomList.indexOf(data), 1);
-    }
+    // if (data.numberOfplayers > 0) {
+    roomList.splice(roomList.indexOf(data), 1);
+    roomList.push(data);
+    // }
+    // else {
+    //   roomList.splice(roomList.indexOf(data), 1);
+    // }
     console.log(roomList);
   });
   //sends out the room object
