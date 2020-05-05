@@ -5,7 +5,6 @@ const express = require("express");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 let clientPath = __dirname + `/../public`;
-// console.log(clientPath);
 app.use(express.static(clientPath));
 
 const PORT = process.env.PORT || 3000;
@@ -28,7 +27,7 @@ io.on("connection", (socket) => {
     // else {
     //   roomList.splice(roomList.indexOf(data), 1);
     // }
-
+    io.to(data.name).emit("a_user_joined", "stop spinner");
     console.log(roomList);
   });
   //sends out the room object
@@ -44,14 +43,13 @@ io.on("connection", (socket) => {
     });
     console.log(socket.rooms);
   });
-  socket.on("roll", function (data) {
-    let v = setInterval(function () {
-      io.emit("dice", lib.generateRandom());
-    }, 500);
-    setTimeout(function () {
-      clearInterval(v);
-    }, 2500);
+
+  //handles user left
+  socket.on("a_user_left", function (data) {
+    io.to(data.name).emit("add_spinner", "spinner in action");
   });
+
+  //handles dice rolling
   socket.on("rolldice", function (data) {
     socket.emit("disableRoll", "disable");
     socket.to(data.name).emit("your_turn", "roll");

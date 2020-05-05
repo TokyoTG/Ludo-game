@@ -84,6 +84,7 @@
         id: generateRoomId(),
         numberOfPlayers: 1,
         playerName: playerName,
+        player: 'one',
       }
       localStorage.clear();
       objectSetter(2);
@@ -138,9 +139,9 @@
       let roomId = $("#room-id").val()
       for (let item of rooms) {
         if (item.id == roomId) {
-          console.log('ok');
           item.numberOfPlayers += 1;
           item.playerName = playerName;
+          item.player = 'two';
           socket.emit('updateRoom', item);
           localStorage.setItem('roomObj', JSON.stringify(item))
           location.assign('./game.html')

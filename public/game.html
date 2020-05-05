@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dice2.css">
+    <link rel="stylesheet" href="spinner.css">
     <title>Document</title>
 </head>
 
@@ -211,6 +212,16 @@
     <div style="margin: 20px 10px;" class="out-container" id="playerTwo">
 
     </div>
+    <div id="spinner-container">
+        <div class="sk-chase">
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+        </div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="./index.js"></script>
@@ -280,19 +291,26 @@
             playerRoom.numberOfPlayers -= 1
             localStorage.setItem('roomObj', '');
             socket.emit('updateRoom', playerRoom);
+            socket.emit('a_user_left', playerRoom);
             location.assign('index.html')
         })
 
         function rollsDice() {
             socket.emit('rolldice', playerRoom);
         }
-        // console.log(socket.rooms);
         socket.emit('game', playerRoom)
         socket.on("user", function (data) {
             console.log(data)
         })
         socket.on("new_user", function (data) {
             console.log(data)
+        })
+
+        socket.on('a_user_joined', function () {
+            $("#spinner-container").css('display', 'none');
+        })
+        socket.on('add_spinner', function () {
+            $("#spinner-container").css('display', 'block');
         })
     </script>
 </body>
