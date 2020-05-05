@@ -517,15 +517,16 @@ function storeOutsidePiece(element) {
 
 ///DICE
 
-function rollDice() {
-  let arr = [];
-  let ran;
+function rollDice(arr) {
+  // let arr = [];
+  // ran = getRandomNumber(1, 6);
+  // let ran;
   const dice = [...document.querySelectorAll(".die-list")];
-  dice.forEach((die) => {
+  dice.forEach((die, index) => {
     toggleClasses(die);
-    ran = getRandomNumber(1, 6);
-    die.dataset.roll = ran;
-    arr.push(ran);
+    // ran = getRandomNumber(1, 6);
+    die.dataset.roll = arr[index];
+    // arr.push(ran);
   });
   return arr;
 }
@@ -538,7 +539,9 @@ function toggleClasses(die) {
 function getRandomNumber(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  let ran1 = Math.floor(Math.random() * (max - min + 1)) + min;
+  let ran2 = Math.floor(Math.random() * (max - min + 1)) + min;
+  return [ran1, ran2];
 }
 
 function displayDiceResult(arr) {
