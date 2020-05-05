@@ -10,7 +10,7 @@ function objectSetter(num) {
     // create two player objects
     playerOneObject = {
       player: "one",
-      outPiece: [],
+      outPiece: {},
       pieceDetails: [
         {
           house: "green",
@@ -35,7 +35,7 @@ function objectSetter(num) {
 
     playerTwoObject = {
       player: "two",
-      outPiece: [],
+      outPiece: {},
       pieceDetails: [
         {
           house: "red",
@@ -176,6 +176,7 @@ function getClassList(element) {
   let arr = [];
   //check if the piece count as is enough to remove the piece from the game
   if (element.count == 62) {
+    addToOutside(element);
     return modifyObject(element.house, element.player, element.pieceNmuber);
   }
   // handles the house going part of the game
@@ -239,7 +240,7 @@ function getClassList(element) {
           modifyObject(element.house, element.player, element.pieceNmuber);
           resetPieceCount(element);
           addPieceBackToHouse(prev);
-          addToOutside(element.player, element.house);
+          addToOutside(element);
 
           return resetPieceCount(prev);
         }
@@ -566,11 +567,12 @@ function selectRoll() {
   }
 }
 
-function addToOutside(player, house) {
+function addToOutside(element) {
+  let num = element.pieceNmuber + "-" + element.house;
   let objects = objectRetriever();
   for (let object of objects) {
-    if (player == object.player) {
-      object.outPiece.push(house);
+    if (element.player == object.player) {
+      object.outPiece[num] = element.house;
     }
   }
   storePlayerObjects(...objects);
@@ -585,14 +587,14 @@ function displayOutsidePiece() {
   let playerTwo = document.getElementById("playerTwo");
   for (let item of arr) {
     if ("one" == item.player) {
-      item.outPiece.forEach((element) => {
-        playerOneText += `<p class=" out ${element}"></p>`;
-      });
+      for (let key in item.outPiece) {
+        playerOneText += `<p class=" out ${item.outPiece[key]}"></p>`;
+      }
     }
     if ("two" == item.player) {
-      item.outPiece.forEach((element) => {
-        playerTwoText += `<p class=" out ${element}"></p>`;
-      });
+      for (let key in item.outPiece) {
+        playerTwoText += `<p class=" out ${item.outPiece[key]}"></p>`;
+      }
     }
   }
   playerOne.innerHTML = playerOneText;
