@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
     //   roomList.splice(roomList.indexOf(data), 1);
     // }
     io.to(data.name).emit("a_user_joined", "stop spinner"); //stops the waiting spinner
-    console.log(roomList);
+    // console.log(roomList);
   });
   //sends out the room object
   io.emit("rooms", roomList);
@@ -42,6 +42,9 @@ io.on("connection", (socket) => {
 
   //handles user left
   socket.on("a_user_left", function (data) {
+    if (!data.numberOfPlayers) {
+      roomList.splice(roomList.indexOf(data), 1);
+    }
     io.to(data.name).emit("add_spinner", "spinner in action"); //notifies the user when the other user left
   });
 

@@ -213,7 +213,9 @@
 
     </div>
     <div id="spinner-container">
+        <span class="close" title="Leave Room">&times;</span>
         <div class="sk-chase">
+
             <div class="sk-chase-dot"></div>
             <div class="sk-chase-dot"></div>
             <div class="sk-chase-dot"></div>
@@ -279,6 +281,10 @@
         socket.on('rooms', function (data) {
             roomList = data //assigns the room array to a global variable
             console.log(data);
+        })
+
+        $(".close").click(function () {
+            $("#quit").click();
         })
 
         //sends the dice roll out to users in the room

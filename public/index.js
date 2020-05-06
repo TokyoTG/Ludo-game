@@ -116,6 +116,7 @@ function select() {
   let res;
   // add selected class to the clicked square
   $(selectedPiece).addClass("selected");
+
   arr = selectedPiece.attr("class").split(" ");
   if (arr.includes("shadow")) {
     // res = selectedPiece.dataset.occupier;
