@@ -77,7 +77,7 @@
     $("#create").submit(function (e) {
       e.preventDefault()
       let playerName = $("#creator-name").val();
-      let roomName = $("#room-name").val()
+      let roomName = $("#room-name").val();
       roomObj = {
         name: roomName,
         creator: playerName,
@@ -85,6 +85,7 @@
         numberOfPlayers: 1,
         playerName: playerName,
         player: 'one',
+        userJoined: false
       }
       localStorage.clear();
       objectSetter(2);
@@ -141,6 +142,7 @@
         if (item.id == roomId) {
           item.numberOfPlayers += 1;
           item.playerName = playerName;
+          item.userJoined = true
           item.player = 'two';
           socket.emit('updateRoom', item);
           localStorage.setItem('roomObj', JSON.stringify(item))

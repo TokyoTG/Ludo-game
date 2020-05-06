@@ -10,7 +10,6 @@ app.use(express.static(clientPath));
 const PORT = process.env.PORT || 3000;
 
 let roomList = [];
-
 io.on("connection", (socket) => {
   console.log("user connected");
   socket.on("create_room", function (data) {
@@ -36,10 +35,7 @@ io.on("connection", (socket) => {
   socket.on("game", function (data) {
     socket.rooms["roomName"] = data.name;
     socket.join(data.name, function () {
-      io.to(data.name).emit(
-        "user",
-        ` ${data.playerName} Joined ${data.name} room`
-      );
+      io.to(data.name).emit("user", data);
     });
     console.log(socket.rooms);
   });

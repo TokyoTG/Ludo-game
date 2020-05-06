@@ -220,7 +220,9 @@
             <div class="sk-chase-dot"></div>
             <div class="sk-chase-dot"></div>
             <div class="sk-chase-dot"></div>
+
         </div>
+        <p>Wait for second user...</p>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -229,6 +231,8 @@
         if (localStorage.getItem('roomObj') == '') {
             location.replace('index.html')
         }
+
+
         let rollResult, selectedCount, selectedRoll;
         displayOutsidePiece();
 
@@ -300,14 +304,15 @@
         }
         socket.emit('game', playerRoom)
         socket.on("user", function (data) {
-            console.log(data)
-        })
-        socket.on("new_user", function (data) {
-            console.log(data)
+            console.log(` ${data.playerName} Joined ${data.name} room`)
+            if (data.userJoined) {
+                $("#spinner-container").css('display', 'none');
+            }
         })
 
         socket.on('a_user_joined', function () {
             $("#spinner-container").css('display', 'none');
+
         })
         socket.on('add_spinner', function () {
             $("#spinner-container").css('display', 'block');
