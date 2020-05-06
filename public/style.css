@@ -356,3 +356,46 @@ li.dropdown {
   background: greenyellow;
   padding: 5px 10px;
 }
+
+.out {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 50px;
+  z-index: 100;
+  width: 6.66%;
+  /* display: inline-block; */
+  text-align: center;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 15px;
+  border-collapse: collapse;
+  border: 1px solid #e5e5e569;
+}
+.out.green {
+  background: #2e7d32;
+}
+
+.out.yellow {
+  background: #ffd600;
+}
+
+.out.red {
+  background: #b71c1c;
+}
+.out.blue {
+  background: #1976d2;
+}
+
+#playerOne,
+#playerTwo {
+  position: absolute;
+}
+
+#playerOne {
+  top: 20px;
+}
+
+#playerTwo {
+  right: 0;
+  bottom: 60px;
+}

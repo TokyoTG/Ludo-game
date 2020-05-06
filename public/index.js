@@ -10,6 +10,7 @@ function objectSetter(num) {
     // create two player objects
     playerOneObject = {
       player: "one",
+      outPiece: {},
       pieceDetails: [
         {
           house: "green",
@@ -34,6 +35,7 @@ function objectSetter(num) {
 
     playerTwoObject = {
       player: "two",
+      outPiece: {},
       pieceDetails: [
         {
           house: "red",
@@ -99,7 +101,7 @@ function seedDisplay(obj) {
       $(`#${item.house}`).html("");
       for (let piece of item.pieceNmuber) {
         $(`#${item.house}`).append(
-          `<div class="square ${piece} ${item.house}" onclick="select()"></div>`
+          `<div class="square ${piece} ${item.house}" onclick="emitSelect(this)"></div>`
         );
       }
     }
@@ -113,17 +115,19 @@ function select() {
   clearAllSelected();
   let res;
   // add selected class to the clicked square
-  $(event.target).addClass("selected");
-  arr = Array.from(event.target.classList);
+  $(selectedPiece).addClass("selected");
+
+  arr = selectedPiece.attr("class").split(" ");
   if (arr.includes("shadow")) {
-    res = event.target.dataset.occupier;
+    // res = selectedPiece.dataset.occupier;
+    res = selectedPiece.attr("data-occupier");
   } else if (arr.includes("celldrop")) {
     res = arr[1];
   } else {
     res = arr[1] + "-" + arr[2];
   }
 
-  // console.log(res)
+  // console.log(res);
   localStorage.setItem("selected", res);
   return res;
 }
@@ -155,12 +159,17 @@ function increasePieceCount(num, code) {
   //increases the piece count base on the number passed as argument
   // let code = pieceNmuber + "-" + house;
   let seedDetails = JSON.parse(localStorage.getItem(code));
+  if (seedDetails.count == 0 && num != 6) {
+    return false;
+  }
   if (seedDetails.count + num <= 62) {
     seedDetails.count += num;
   }
 
   localStorage.setItem(code, JSON.stringify(seedDetails));
   displayOntheMove(collateCount(seedDetails.house));
+  displayOntheMove(collateCount(seedDetails.house));
+  return true;
 }
 
 function getClassList(element) {
@@ -169,6 +178,7 @@ function getClassList(element) {
   let arr = [];
   //check if the piece count as is enough to remove the piece from the game
   if (element.count == 62) {
+    addToOutside(element);
     return modifyObject(element.house, element.player, element.pieceNmuber);
   }
   // handles the house going part of the game
@@ -232,6 +242,8 @@ function getClassList(element) {
           modifyObject(element.house, element.player, element.pieceNmuber);
           resetPieceCount(element);
           addPieceBackToHouse(prev);
+          addToOutside(element);
+
           return resetPieceCount(prev);
         }
 
@@ -250,7 +262,7 @@ function getClassList(element) {
       $(res[0]).addClass(element.house, "shadow");
       $(res[0]).addClass("shadow");
 
-      res[0].setAttribute("onclick", "select()");
+      res[0].setAttribute("onclick", "emitSelect(this)");
       res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
       res[0].dataset.player = element.player;
       //removes piece from inside house
@@ -288,8 +300,10 @@ function cellSanitizer() {
   cells.forEach((data, index) => {
     for (let i = 0; i < arrHouse.length; i++) {
       if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("shadow")) {
-        $(data).removeClass(arrHouse[i]);
         $(data).removeClass("shadow");
+        if (!$(data).hasClass("houses")) {
+          $(data).removeClass(arrHouse[i]);
+        }
       }
       if ($(data).hasClass(arrHouse[i]) && $(data).hasClass("dropdown")) {
         $(data).removeClass(arrHouse[i]);
@@ -505,15 +519,16 @@ function storeOutsidePiece(element) {
 
 ///DICE
 
-function rollDice() {
-  let arr = [];
-  let ran;
+function rollDice(arr) {
+  // let arr = [];
+  // ran = getRandomNumber(1, 6);
+  // let ran;
   const dice = [...document.querySelectorAll(".die-list")];
-  dice.forEach((die) => {
+  dice.forEach((die, index) => {
     toggleClasses(die);
-    ran = getRandomNumber(1, 6);
-    die.dataset.roll = ran;
-    arr.push(ran);
+    // ran = getRandomNumber(1, 6);
+    die.dataset.roll = arr[index];
+    // arr.push(ran);
   });
   return arr;
 }
@@ -526,7 +541,9 @@ function toggleClasses(die) {
 function getRandomNumber(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  let ran1 = Math.floor(Math.random() * (max - min + 1)) + min;
+  let ran2 = Math.floor(Math.random() * (max - min + 1)) + min;
+  return [ran1, ran2];
 }
 
 function displayDiceResult(arr) {
@@ -546,11 +563,116 @@ function clearSelectedRoll() {
 
 function selectRoll() {
   clearSelectedRoll();
-  let selected = event.target;
+  let selected = selectedRoll;
   let selectedCount;
   $(selected).addClass("selected");
-  selectedCount = +selected.textContent;
+  selectedCount = +selected.text();
+  // console.log(selected);
   if (selectedCount) {
     return selectedCount;
   }
+}
+
+function addToOutside(element) {
+  let num = element.pieceNmuber + "-" + element.house;
+  let objects = objectRetriever();
+  for (let object of objects) {
+    if (element.player == object.player) {
+      object.outPiece[num] = element.house;
+    }
+  }
+  storePlayerObjects(...objects);
+  displayOutsidePiece();
+}
+
+function displayOutsidePiece() {
+  let arr = objectRetriever();
+  let playerOne = document.getElementById("playerOne");
+  let playerOneText = "";
+  let playerTwoText = "";
+  let playerTwo = document.getElementById("playerTwo");
+  for (let item of arr) {
+    if ("one" == item.player) {
+      for (let key in item.outPiece) {
+        playerOneText += `<p class=" out ${item.outPiece[key]}"></p>`;
+      }
+    }
+    if ("two" == item.player) {
+      for (let key in item.outPiece) {
+        playerTwoText += `<p class=" out ${item.outPiece[key]}"></p>`;
+      }
+    }
+  }
+  playerOne.innerHTML = playerOneText;
+  playerTwo.innerHTML = playerTwoText;
+}
+
+function countPiece() {
+  event.preventDefault();
+  let selected = localStorage.getItem("selected");
+  if (selected && selectedCount) {
+    let pieceCount = increasePieceCount(selectedCount, selected);
+    clearSelectedRoll();
+    clearAllSelected();
+    if (pieceCount) {
+      selectedCount = 0;
+      selectedRoll.text("0");
+      emitDisableRollSelect();
+      // selectedRoll.attr("onclick", "");
+    }
+    localStorage.setItem("selected", "");
+  }
+}
+
+function rolls() {
+  // selectedRoll = event.target;
+  selectedCount = selectRoll();
+}
+
+//multi-player
+
+//strips the roll button of event
+function disableRoll() {
+  let rollBtn = document.getElementById("roll-button");
+  rollBtn.setAttribute("onclick", "");
+}
+
+//handles enabling user turn
+function is_your_turn() {
+  let rollBtn = document.getElementById("roll-button");
+  let countBtn = document.getElementById("count");
+  countBtn.setAttribute("onclick", "emitCount()");
+  rollBtn.setAttribute("onclick", "rollsDice()");
+  let rolls = [...document.getElementsByClassName("rolls")];
+  rolls.forEach((item) => {
+    item.setAttribute("onclick", "");
+  });
+}
+
+function emitCount() {
+  socket.emit("piece_counted", playerRoom);
+}
+
+function emitSelect(obj) {
+  selectedPiece = [...event.target.classList].join(".");
+  socket.emit("piece_selected", getSelectedPiece(selectedPiece));
+  // console.log(obj);
+  // console.log(selectedPiece);
+}
+// function disableCount() {
+//   let countBtn = document.getElementById("count");
+//   countBtn.setAttribute("onclick", "");
+// }
+
+function getSelectedPiece(obj) {
+  return [obj, playerRoom];
+}
+
+function emitSelectedRoll() {
+  let selectedRoll = [...event.target.classList].join(".");
+  socket.emit("roll_selected", getSelectedPiece(selectedRoll));
+}
+
+function emitDisableRollSelect() {
+  socket.emit("disable_selected_roll", selectedRoll);
 }
