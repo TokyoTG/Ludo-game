@@ -199,12 +199,12 @@
         </ol>
     </div>
     <div>
-        <button id="count">Count seed</button>
+        <button id="count" onclick="emitCount()">Count seed</button>
         <button id="quit">Exit Room</button>
         <button id="reset">Reset Game</button>
         <button type="button" id="roll-button" onclick="rollsDice()">Roll Dice</button>
-        <p class="rolls">0</p>
-        <p class="rolls">0</p>
+        <p class="rolls one" onclick="emitSelectedRoll()">0</p>
+        <p class="rolls two" onclick="emitSelectedRoll()">0</p>
     </div>
     <div style="margin: 20px 10px;" class="out-container" id="playerOne">
 
@@ -229,39 +229,44 @@
     <script src="./index.js"></script>
     <script>
         if (localStorage.getItem('roomObj') == '') {
-            location.replace('index.html')
+            location.replace('index.html') //redirects when the user is not in any room
         }
 
 
-        let rollResult, selectedCount, selectedRoll;
+        let rollResult, selectedCount, selectedRoll, selectedPiece; //global variables for DOM element
         displayOutsidePiece();
 
-        $(".rolls").click(function () {
-            selectedRoll = event.target;
-            selectedCount = selectRoll()
-        })
+        //to be deleted later
+        // $(".rolls").click(function () {
+        //     selectedRoll = event.target;
+        //     selectedCount = selectRoll()
+        // })
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
-        var socket = io();
+        var socket = io(); //initialises the socket.io object
         $(document).ready(function () {
             seedDisplay(objectRetriever());
             displayOntheMove(collateCount());
         })
 
-        $("#count").click(function (e) {
-            let selected = localStorage.getItem("selected");
-            if (selected && selectedCount) {
-                let pieceCount = increasePieceCount(selectedCount, selected);
-                clearSelectedRoll();
-                clearAllSelected();
-                if (pieceCount) {
-                    selectedCount = 0;
-                    selectedRoll.textContent = 0;
-                }
-                localStorage.setItem("selected", "");
-            }
-        });
 
+        //to be deleted later
+
+        // $("#count").click(function (e) {
+        //     let selected = localStorage.getItem("selected");
+        //     if (selected && selectedCount) {
+        //         let pieceCount = increasePieceCount(selectedCount, selected);
+        //         clearSelectedRoll();
+        //         clearAllSelected();
+        //         if (pieceCount) {
+        //             selectedCount = 0;
+        //             selectedRoll.textContent = 0;
+        //         }
+        //         localStorage.setItem("selected", "");
+        //     }
+        // });
+
+        //resets game
         $("#reset").click(function (e) {
             e.preventDefault();
             let confirmation = window.confirm('Are You sure');
@@ -270,52 +275,101 @@
             }
         })
 
+        //recieves the room array from server
         socket.on('rooms', function (data) {
-            roomList = data
+            roomList = data //assigns the room array to a global variable
             console.log(data);
         })
+
+        //sends the dice roll out to users in the room
         socket.on('roll', function (data) {
             // console.log(data)
-            clearAllSelected();
-            clearSelectedRoll();
-            rollResult = rollDice(data);
+            clearAllSelected(); //clears previsiously selected piece
+            clearSelectedRoll(); //clears previsiously selected roll results
+            rollResult = rollDice(data); //gets the roll result 
             setTimeout(function () {
-                displayDiceResult(rollResult);
+                displayDiceResult(rollResult); //displays the roll result
             }, 1500);
         })
+
+        //disables the dice rolling function
         socket.on('disableRoll', function () {
             disableRoll();
         })
+
+        //enables the other user to be able to roll
         socket.on('your_turn', function () {
             is_your_turn();
         })
+
         console.log(playerRoom);
+
+        //removes the user from a rooom 
         $("#quit").click(function () {
             // socket.rooms.leave()
             playerRoom.numberOfPlayers -= 1
             localStorage.setItem('roomObj', '');
-            socket.emit('updateRoom', playerRoom);
-            socket.emit('a_user_left', playerRoom);
-            location.assign('index.html')
+            // socket.emit('updateRoom', playerRoom); //request the room info be changed
+            socket.emit('a_user_left', playerRoom); //notifies the server a user left
+            location.assign('index.html') //sends the user that left to home page
         })
 
+        //enables the user that rolls a dice to be able to select the roll result
+        socket.on("enable_roll_select", function () {
+            let rolls = [...document.getElementsByClassName("rolls")];
+            rolls.forEach((item) => {
+                item.setAttribute("onclick", "emitSelectedRoll()");
+            });
+        })
+
+        //initializes dice rolling
         function rollsDice() {
             socket.emit('rolldice', playerRoom);
         }
+
+        //request the server to add the user to room
         socket.emit('game', playerRoom)
+
+        //indicates a user join
         socket.on("user", function (data) {
             console.log(` ${data.playerName} Joined ${data.name} room`)
-            if (data.userJoined) {
-                $("#spinner-container").css('display', 'none');
+            if (data.userJoined) { //checks if the second user has 
+                $("#spinner-container").css('display', 'none'); //stops the spinner
             }
         })
 
+        //stops the spinner for the second user
         socket.on('a_user_joined', function () {
             $("#spinner-container").css('display', 'none');
-
         })
+
+        //disables the selected roll after counting
+        socket.on("you_can_disable", function (data) {
+            // console.log('hi');
+            selectedRoll.attr("onclick", "");
+        })
+
+        //emits the counting to the room
+        socket.on("counting", function () {
+            countPiece();
+        })
+
+        //adds spinner when a user leaves a room
         socket.on('add_spinner', function () {
             $("#spinner-container").css('display', 'block');
+        })
+
+        //emits piece selection
+        socket.on("select_the_piece", function (data) {
+            selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
+            select()
+        })
+
+        //emits roll result selection 
+        socket.on("select_the_roll", function (data) {
+            selectedRoll = $(`.${data[0]}`); //selects the roll result using the classnames sent from server
+            // console.log(selectedRoll.text());
+            rolls();
         })
     </script>
 </body>

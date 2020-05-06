@@ -101,7 +101,7 @@ function seedDisplay(obj) {
       $(`#${item.house}`).html("");
       for (let piece of item.pieceNmuber) {
         $(`#${item.house}`).append(
-          `<div class="square ${piece} ${item.house}" onclick="select()"></div>`
+          `<div class="square ${piece} ${item.house}" onclick="emitSelect(this)"></div>`
         );
       }
     }
@@ -115,17 +115,18 @@ function select() {
   clearAllSelected();
   let res;
   // add selected class to the clicked square
-  $(event.target).addClass("selected");
-  arr = Array.from(event.target.classList);
+  $(selectedPiece).addClass("selected");
+  arr = selectedPiece.attr("class").split(" ");
   if (arr.includes("shadow")) {
-    res = event.target.dataset.occupier;
+    // res = selectedPiece.dataset.occupier;
+    res = selectedPiece.attr("data-occupier");
   } else if (arr.includes("celldrop")) {
     res = arr[1];
   } else {
     res = arr[1] + "-" + arr[2];
   }
 
-  // console.log(res)
+  // console.log(res);
   localStorage.setItem("selected", res);
   return res;
 }
@@ -260,7 +261,7 @@ function getClassList(element) {
       $(res[0]).addClass(element.house, "shadow");
       $(res[0]).addClass("shadow");
 
-      res[0].setAttribute("onclick", "select()");
+      res[0].setAttribute("onclick", "emitSelect(this)");
       res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
       res[0].dataset.player = element.player;
       //removes piece from inside house
@@ -561,10 +562,11 @@ function clearSelectedRoll() {
 
 function selectRoll() {
   clearSelectedRoll();
-  let selected = event.target;
+  let selected = selectedRoll;
   let selectedCount;
   $(selected).addClass("selected");
-  selectedCount = +selected.textContent;
+  selectedCount = +selected.text();
+  // console.log(selected);
   if (selectedCount) {
     return selectedCount;
   }
@@ -604,25 +606,72 @@ function displayOutsidePiece() {
   playerTwo.innerHTML = playerTwoText;
 }
 
-// function rollsDice() {
-//   socket.emit('rolldice)
-//   // clearAllSelected();
-//   // clearSelectedRoll();
-//   // rollResult = rollDice();
-//   // setTimeout(function () {
-//   //   displayDiceResult(rollResult);
-//   // }, 1500);
-//   // disableRoll(event.target);
-// }
+function countPiece() {
+  event.preventDefault();
+  let selected = localStorage.getItem("selected");
+  if (selected && selectedCount) {
+    let pieceCount = increasePieceCount(selectedCount, selected);
+    clearSelectedRoll();
+    clearAllSelected();
+    if (pieceCount) {
+      selectedCount = 0;
+      selectedRoll.text("0");
+      emitDisableRollSelect();
+      // selectedRoll.attr("onclick", "");
+    }
+    localStorage.setItem("selected", "");
+  }
+}
+
+function rolls() {
+  // selectedRoll = event.target;
+  selectedCount = selectRoll();
+}
 
 //multi-player
 
+//strips the roll button of event
 function disableRoll() {
   let rollBtn = document.getElementById("roll-button");
   rollBtn.setAttribute("onclick", "");
 }
 
+//handles enabling user turn
 function is_your_turn() {
   let rollBtn = document.getElementById("roll-button");
+  let countBtn = document.getElementById("count");
+  countBtn.setAttribute("onclick", "emitCount()");
   rollBtn.setAttribute("onclick", "rollsDice()");
+  let rolls = [...document.getElementsByClassName("rolls")];
+  rolls.forEach((item) => {
+    item.setAttribute("onclick", "");
+  });
+}
+
+function emitCount() {
+  socket.emit("piece_counted", playerRoom);
+}
+
+function emitSelect(obj) {
+  selectedPiece = [...event.target.classList].join(".");
+  socket.emit("piece_selected", getSelectedPiece(selectedPiece));
+  // console.log(obj);
+  // console.log(selectedPiece);
+}
+// function disableCount() {
+//   let countBtn = document.getElementById("count");
+//   countBtn.setAttribute("onclick", "");
+// }
+
+function getSelectedPiece(obj) {
+  return [obj, playerRoom];
+}
+
+function emitSelectedRoll() {
+  let selectedRoll = [...event.target.classList].join(".");
+  socket.emit("roll_selected", getSelectedPiece(selectedRoll));
+}
+
+function emitDisableRollSelect() {
+  socket.emit("disable_selected_roll", selectedRoll);
 }
