@@ -62,6 +62,14 @@ io.on("connection", (socket) => {
     io.to(data.name).emit("roll", lib.getRandomNumber(1, 6));
   });
 
+  // socket.on("you_are_nexts", function (data) {
+  //   socket.to(data.name).emit("your_turn", "roll");
+  // });
+
+  // socket.on("ok_disable_rolls", function () {
+  //   socket.emit("disableRoll", "disable");
+  // });
+
   //handles selection emission
   socket.on("piece_selected", function (data) {
     socket.emit("select_the_piece", data);

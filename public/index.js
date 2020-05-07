@@ -533,6 +533,25 @@ function checkPlayer(house, player) {
   return false;
 }
 
+function copyRoomId() {
+  /* Get the text field */
+  var copyText = document.getElementById("copy");
+  let copyAlert = document.getElementById("toast");
+  copyAlert.style.display = "block";
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+  setTimeout(function () {
+    copyAlert = document.getElementById("toast");
+    copyAlert.style.display = "none";
+  }, 1000);
+}
+
+function forfietCount() {}
+
 ///DICE
 
 function rollDice(arr) {
@@ -691,4 +710,8 @@ function emitSelectedRoll() {
 
 function emitDisableRollSelect() {
   socket.emit("disable_selected_roll", selectedRoll);
+}
+
+function rollAgain(num1, num2) {
+  return num1 == 6 && num2 == 6;
 }

@@ -124,7 +124,7 @@ body {
   display: none;
 }
 
-#spinner-container p,
+#spinner-text,
 #spinner-container2 p {
   position: absolute;
   top: 55%;
@@ -133,6 +133,17 @@ body {
   color: #fff;
   font-size: 1.2em;
   font-style: italic;
+}
+
+#toast {
+  background: #263238;
+  position: absolute;
+  color: white;
+  display: none;
+  right: 20%;
+  top: 30%;
+  border-radius: 5px;
+  padding: 10px 15px;
 }
 
 /* The Close Button */
@@ -151,4 +162,17 @@ body {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+#copy {
+  position: absolute;
+  left: -999999px;
+}
+
+.fa-copy {
+  margin-left: 10px;
+  cursor: pointer;
+}
+.fa-copy:hover {
+  color: cadetblue;
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1de9b6">
+    <link rel="stylesheet" href="all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dice2.css">
     <link rel="stylesheet" href="spinner.css">
@@ -213,6 +214,7 @@
 
     </div>
     <div id="spinner-container">
+        <p id="toast">Copied !!</p>
         <span class="close" title="Leave Room">&times;</span>
         <div class="sk-chase">
 
@@ -224,7 +226,11 @@
             <div class="sk-chase-dot"></div>
 
         </div>
-        <p>Wait for second user... <br> <span id="room-id">Room ID:</span> </p>
+        <p id="spinner-text">Wait for second user... <br>
+            Room ID: <span id="room-id"></span>
+            <span onclick="copyRoomId()"> <i class="far fa-copy"></i></span>
+            <input type="text" id="copy">
+        </p>
 
     </div>
     <div id="spinner-container2">
@@ -288,9 +294,11 @@
 
         // })
 
-        $("#room-id").text(`Room ID: <span id="r-id">${playerRoom.id}</span>`)
 
+        $("#room-id").text(playerRoom.id);
+        $("#copy").attr('value', `${playerRoom.id}`)
         //resets game
+
         $("#reset").click(function (e) {
             e.preventDefault();
             let confirmation = window.confirm('Are You sure');
@@ -312,16 +320,25 @@
         //sends the dice roll out to users in the room
         socket.on('roll', function (data) {
             // console.log(data)
+
             clearAllSelected(); //clears previsiously selected piece
             clearSelectedRoll(); //clears previsiously selected roll results
             rollResult = rollDice(data); //gets the roll result 
             setTimeout(function () {
                 displayDiceResult(rollResult); //displays the roll result
             }, 1500);
+            // if (rollAgain(...rollResult)) {
+            //     socket.emit('roll_again', 'you can roll again')
+            // } else {
+            //     console.log(rollAgain(...rollResult))
+            //     socket.emit('ok_disable_rolls', "disable");
+            //     socket.emit("you_are_nexts", playerRoom);
+            // }
         })
 
         //disables the dice rolling function
         socket.on('disableRoll', function () {
+            console.log('hi')
             disableRoll();
         })
 
