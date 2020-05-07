@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="theme-color" content="#1de9b6">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
 </head>
@@ -66,8 +67,7 @@
 
     //should be removed when working on multiplayer
 
-    objectSetter(2);
-    storePiece();
+
 
 
     var socket = io();
@@ -144,6 +144,9 @@
           item.playerName = playerName;
           item.userJoined = true
           item.player = 'two';
+          localStorage.clear();
+          objectSetter(2);
+          storePiece();
           socket.emit('updateRoom', item);
           localStorage.setItem('roomObj', JSON.stringify(item))
           location.assign('./game.html')

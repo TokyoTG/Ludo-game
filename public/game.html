@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="theme-color" content="#1de9b6">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dice2.css">
     <link rel="stylesheet" href="spinner.css">
@@ -224,7 +224,23 @@
             <div class="sk-chase-dot"></div>
 
         </div>
-        <p>Wait for second user...</p>
+        <p>Wait for second user... <br> <span id="room-id">Room ID:</span> </p>
+
+    </div>
+    <div id="spinner-container2">
+        <span class="close" title="Leave Room">&times;</span>
+        <div class="sk-chase">
+
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+
+        </div>
+        <p>Connection lost reconnecting...</p>
+
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -267,6 +283,12 @@
         //         localStorage.setItem("selected", "");
         //     }
         // });
+
+        // $("#r-id").dblclick(function(){
+
+        // })
+
+        $("#room-id").text(`Room ID: <span id="r-id">${playerRoom.id}</span>`)
 
         //resets game
         $("#reset").click(function (e) {
@@ -368,14 +390,39 @@
         //emits piece selection
         socket.on("select_the_piece", function (data) {
             selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
+            let house = getPieceHouse(selectedPiece)
+            if (checkPlayer(house, playerRoom.player)) {
+                // select()
+                socket.emit('selection_made', data);
+            } else {
+                alert('You can not select, Its not ur house')
+            }
+            // console.log(playerRoom.player);
+        })
+        socket.on("emit_select", function (data) {
+            selectedPiece = $(`.${data[0]}`);
             select()
         })
-
         //emits roll result selection 
         socket.on("select_the_roll", function (data) {
             selectedRoll = $(`.${data[0]}`); //selects the roll result using the classnames sent from server
             // console.log(selectedRoll.text());
+
             rolls();
+        })
+
+        //handles connection
+        socket.on('user_is_connected', function () {
+            socket.emit('a_user_connected', playerRoom)
+        })
+        socket.on('connection_lost', function () {
+            socket.emit('a_user_disconnected', playerRoom)
+        })
+        socket.on('on_connection', function () {
+            $("#spinner-container2").css('display', 'none');
+        })
+        socket.on("user_disconnects", function () {
+            $("#spinner-container2").css('display', 'block');
         })
     </script>
 </body>

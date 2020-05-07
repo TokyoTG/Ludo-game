@@ -104,11 +104,13 @@ body {
   padding: 0;
 }
 
-#spinner-container {
+#spinner-container,
+#spinner-container2 {
   width: 100%;
   height: 100%;
   /* display: none; */
   left: 0;
+  box-sizing: border-box;
   top: 0;
   position: fixed;
   background: black;
@@ -118,7 +120,12 @@ body {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-#spinner-container p {
+#spinner-container2 {
+  display: none;
+}
+
+#spinner-container p,
+#spinner-container2 p {
   position: absolute;
   top: 55%;
   left: 45%;

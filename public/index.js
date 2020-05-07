@@ -517,6 +517,22 @@ function storeOutsidePiece(element) {
   let arr = JSON.parse(localStorage.getItem("outsidePiece"));
 }
 
+function getPieceHouse(element) {
+  arr = element.attr("class").split(" ");
+  return arr[2];
+}
+function checkPlayer(house, player) {
+  let p1 = ["green", "yellow"];
+  let p2 = ["red", "blue"];
+  if (p1.includes(house) && player === "one") {
+    return true;
+  }
+  if (p2.includes(house) && player == "two") {
+    return true;
+  }
+  return false;
+}
+
 ///DICE
 
 function rollDice(arr) {
