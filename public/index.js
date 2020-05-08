@@ -517,6 +517,47 @@ function storeOutsidePiece(element) {
   let arr = JSON.parse(localStorage.getItem("outsidePiece"));
 }
 
+function getPieceHouse(element) {
+  arr = element.attr("class").split(" ");
+  if (arr.includes("celldrop")) {
+    return arr[0];
+  }
+  if (arr.includes("shadow")) {
+    return arr[1];
+  }
+  return arr[2];
+}
+function checkPlayer(house, player) {
+  let p1 = ["green", "yellow"];
+  let p2 = ["red", "blue"];
+  if (p1.includes(house) && player === "one") {
+    return true;
+  }
+  if (p2.includes(house) && player == "two") {
+    return true;
+  }
+  return false;
+}
+
+function copyRoomId() {
+  /* Get the text field */
+  var copyText = document.getElementById("copy");
+  let copyAlert = document.getElementById("toast");
+  copyAlert.style.display = "block";
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+  setTimeout(function () {
+    copyAlert = document.getElementById("toast");
+    copyAlert.style.display = "none";
+  }, 1000);
+}
+
+function forfietCount() {}
+
 ///DICE
 
 function rollDice(arr) {
@@ -610,7 +651,9 @@ function displayOutsidePiece() {
 function countPiece() {
   event.preventDefault();
   let selected = localStorage.getItem("selected");
+  console.log(selected);
   if (selected && selectedCount) {
+    console.log("counting happened here");
     let pieceCount = increasePieceCount(selectedCount, selected);
     clearSelectedRoll();
     clearAllSelected();
@@ -675,4 +718,8 @@ function emitSelectedRoll() {
 
 function emitDisableRollSelect() {
   socket.emit("disable_selected_roll", selectedRoll);
+}
+
+function rollAgain(num1, num2) {
+  return num1 == 6 && num2 == 6;
 }
