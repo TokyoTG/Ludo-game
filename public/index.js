@@ -519,6 +519,12 @@ function storeOutsidePiece(element) {
 
 function getPieceHouse(element) {
   arr = element.attr("class").split(" ");
+  if (arr.includes("celldrop")) {
+    return arr[0];
+  }
+  if (arr.includes("shadow")) {
+    return arr[1];
+  }
   return arr[2];
 }
 function checkPlayer(house, player) {
@@ -645,7 +651,9 @@ function displayOutsidePiece() {
 function countPiece() {
   event.preventDefault();
   let selected = localStorage.getItem("selected");
+  console.log(selected);
   if (selected && selectedCount) {
+    console.log("counting happened here");
     let pieceCount = increasePieceCount(selectedCount, selected);
     clearSelectedRoll();
     clearAllSelected();

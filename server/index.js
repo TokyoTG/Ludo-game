@@ -56,19 +56,22 @@ io.on("connection", (socket) => {
 
   //handles dice rolling
   socket.on("rolldice", function (data) {
-    socket.emit("disableRoll", "disable"); //disables the roll dice to the user that just roll the dice
-    socket.to(data.name).emit("your_turn", "roll"); //enables the other user to roll
+    setTimeout(function () {
+      socket.emit("i_just_roll", "check my result");
+    }, 500);
+    // socket.emit("disableRoll", "disable"); //disables the roll dice to the user that just roll the dice
+    // socket.to(data.name).emit("your_turn", "roll"); //enables the other user to roll
     socket.emit("enable_roll_select", "enable"); //enables the user to be able to select roll result
     io.to(data.name).emit("roll", lib.getRandomNumber(1, 6));
   });
 
-  // socket.on("you_are_nexts", function (data) {
-  //   socket.to(data.name).emit("your_turn", "roll");
-  // });
+  socket.on("you_are_nexts", function (data) {
+    socket.to(data.name).emit("your_turn", "roll");
+  });
 
-  // socket.on("ok_disable_rolls", function () {
-  //   socket.emit("disableRoll", "disable");
-  // });
+  socket.on("ok_disable_rolls", function () {
+    socket.emit("disableRoll", "disable");
+  });
 
   //handles selection emission
   socket.on("piece_selected", function (data) {
@@ -86,6 +89,7 @@ io.on("connection", (socket) => {
     io.to(data[1].name).emit("emit_select", data);
   });
 
+  //handles spinner removal
   socket.on("a_user_connected", function (data) {
     io.to(data.name).emit("on_connection", "remove spinner");
   });

@@ -319,26 +319,27 @@
 
         //sends the dice roll out to users in the room
         socket.on('roll', function (data) {
-            // console.log(data)
-
             clearAllSelected(); //clears previsiously selected piece
             clearSelectedRoll(); //clears previsiously selected roll results
             rollResult = rollDice(data); //gets the roll result 
             setTimeout(function () {
                 displayDiceResult(rollResult); //displays the roll result
             }, 1500);
-            // if (rollAgain(...rollResult)) {
-            //     socket.emit('roll_again', 'you can roll again')
-            // } else {
-            //     console.log(rollAgain(...rollResult))
-            //     socket.emit('ok_disable_rolls', "disable");
-            //     socket.emit("you_are_nexts", playerRoom);
-            // }
+
+        })
+
+        socket.on('i_just_roll', function () {
+            if (rollAgain(...rollResult)) {
+                socket.emit('roll_again', 'you can roll again')
+            } else {
+                // console.log(rollAgain(...rollResult))
+                socket.emit('ok_disable_rolls', "disable");
+                socket.emit("you_are_nexts", playerRoom);
+            }
         })
 
         //disables the dice rolling function
         socket.on('disableRoll', function () {
-            console.log('hi')
             disableRoll();
         })
 
@@ -365,6 +366,7 @@
             rolls.forEach((item) => {
                 item.setAttribute("onclick", "emitSelectedRoll()");
             });
+
         })
 
         //initializes dice rolling
@@ -396,6 +398,7 @@
 
         //emits the counting to the room
         socket.on("counting", function () {
+
             countPiece();
         })
 
@@ -408,6 +411,7 @@
         socket.on("select_the_piece", function (data) {
             selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
             let house = getPieceHouse(selectedPiece)
+            // console.log(house)
             if (checkPlayer(house, playerRoom.player)) {
                 // select()
                 socket.emit('selection_made', data);
@@ -418,13 +422,14 @@
         })
         socket.on("emit_select", function (data) {
             selectedPiece = $(`.${data[0]}`);
+            // console.log(selectedPiece);
             select()
         })
         //emits roll result selection 
         socket.on("select_the_roll", function (data) {
             selectedRoll = $(`.${data[0]}`); //selects the roll result using the classnames sent from server
             // console.log(selectedRoll.text());
-
+            // console.log(selectedRoll)
             rolls();
         })
 

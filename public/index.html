@@ -66,10 +66,7 @@
     // }
 
     //should be removed when working on multiplayer
-    //should be removed when working on multiplayer
 
-    objectSetter(2);
-    storePiece();
     var socket = io();
     let roomObj;
 
@@ -144,9 +141,9 @@
           item.playerName = playerName;
           item.userJoined = true
           item.player = 'two';
-          // localStorage.clear();
-          // objectSetter(2);
-          // storePiece();
+          localStorage.clear();
+          objectSetter(2);
+          storePiece();
           socket.emit('updateRoom', item);
           localStorage.setItem('roomObj', JSON.stringify(item))
           location.assign('./game.html')
