@@ -182,6 +182,7 @@ button {
   color: #333;
   font-size: 1.25rem;
   font-weight: 700;
+  margin-bottom: 10px;
   justify-self: center;
   padding: 0.5rem 1rem;
 }

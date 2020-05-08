@@ -66,11 +66,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("you_are_nexts", function (data) {
-    socket.to(data.name).emit("your_turn", "roll");
+    socket.emit("your_turn", "roll");
+    // socket.to(data.name).emit("your_turn", "roll");
   });
 
-  socket.on("ok_disable_rolls", function () {
-    socket.emit("disableRoll", "disable");
+  socket.on("reset_roll_results", function (data) {
+    socket.to(data.name).emit("send_turn", "the other user can roll");
+    io.to(data.name).emit("reset_rolls", "reset all roll results");
+  });
+
+  socket.on("ok_disable_rolls", function (data) {
+    io.to(data.name).emit("disableRoll", "disable");
   });
 
   //handles selection emission

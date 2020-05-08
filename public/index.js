@@ -683,13 +683,17 @@ function disableRoll() {
 //handles enabling user turn
 function is_your_turn() {
   let rollBtn = document.getElementById("roll-button");
+  // let forfietBtn = document.getElementById("reset-count");
   let countBtn = document.getElementById("count");
+  // forfietBtn.setAttribute("onclick", "forfietCount()");
   countBtn.setAttribute("onclick", "emitCount()");
   rollBtn.setAttribute("onclick", "rollsDice()");
   let rolls = [...document.getElementsByClassName("rolls")];
   rolls.forEach((item) => {
     item.setAttribute("onclick", "");
   });
+  let forfietBtn = document.getElementById("reset-count");
+  forfietBtn.setAttribute("onclick", "");
 }
 
 function emitCount() {
@@ -723,3 +727,15 @@ function emitDisableRollSelect() {
 function rollAgain(num1, num2) {
   return num1 == 6 && num2 == 6;
 }
+
+function forfietCount() {
+  socket.emit("reset_roll_results", playerRoom);
+  // console.log("forfiet");
+}
+
+// function verify_forfiet() {
+//    let rolls = [...document.getElementsByClassName("rolls")];
+//    rolls.forEach((item) => {
+//      item.setAttribute("onclick", "");
+//    });
+// }

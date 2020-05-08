@@ -201,8 +201,10 @@
     </div>
     <div>
         <button id="count" onclick="emitCount()">Count seed</button>
+        <button id="reset-count" onclick="">forfiet Count</button>
         <button id="quit">Exit Room</button>
         <button id="reset">Reset Game</button>
+
         <button type="button" id="roll-button" onclick="rollsDice()">Roll Dice</button>
         <p class="rolls one" onclick="emitSelectedRoll()">0</p>
         <p class="rolls two" onclick="emitSelectedRoll()">0</p>
@@ -333,10 +335,11 @@
                 socket.emit('roll_again', 'you can roll again')
             } else {
                 // console.log(rollAgain(...rollResult))
-                socket.emit('ok_disable_rolls', "disable");
-                socket.emit("you_are_nexts", playerRoom);
+                socket.emit('ok_disable_rolls', playerRoom);
+                // socket.emit("you_are_nexts", playerRoom);
             }
         })
+
 
         //disables the dice rolling function
         socket.on('disableRoll', function () {
@@ -366,7 +369,8 @@
             rolls.forEach((item) => {
                 item.setAttribute("onclick", "emitSelectedRoll()");
             });
-
+            let forfietBtn = document.getElementById("reset-count");
+            forfietBtn.setAttribute("onclick", "forfietCount()");
         })
 
         //initializes dice rolling
@@ -393,9 +397,29 @@
         //disables the selected roll after counting
         socket.on("you_can_disable", function (data) {
             // console.log('hi');
+            let rollresults1 = $(".rolls.one");
+            let rollresults2 = $(".rolls.two");
             selectedRoll.attr("onclick", "");
+            if (rollresults1.text() == "0" && rollresults2.text() == "0") {
+                console.log('done counting');
+                socket.emit("you_are_nexts", playerRoom);
+            }
         })
 
+        socket.on("reset_rolls", function () {
+            let rolls = [...document.getElementsByClassName("rolls")];
+            rolls.forEach((item) => {
+                item.setAttribute("onclick", "");
+                item.textContent = 0;
+            });
+            let forfietBtn = document.getElementById("reset-count");
+            forfietBtn.setAttribute("onclick", "");
+            // socket.emit("you_are_nexts", playerRoom);
+        })
+
+        socket.on("send_turn", function () {
+            socket.emit("you_are_nexts", playerRoom);
+        })
         //emits the counting to the room
         socket.on("counting", function () {
 
@@ -411,7 +435,7 @@
         socket.on("select_the_piece", function (data) {
             selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
             let house = getPieceHouse(selectedPiece)
-            console.log(house)
+            // console.log(house)
             if (checkPlayer(house, playerRoom.player)) {
                 // select()
                 socket.emit('selection_made', data);
