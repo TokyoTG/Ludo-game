@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
     // else {
     //   roomList.splice(roomList.indexOf(data), 1);
     // }
+    io.to(data.name).emit("user_is_connected", "play on");
     io.to(data.name).emit("a_user_joined", "stop spinner"); //stops the waiting spinner
     // console.log(roomList);
   });

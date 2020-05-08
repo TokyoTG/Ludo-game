@@ -448,7 +448,7 @@
                 socket.emit('all_user_connected', playerRoom)
                 console.log('all user connected')
             }
-
+            console.log('player connected');
         })
         socket.on('connection_lost', function () {
             if (playerRoom.player == "one") {
