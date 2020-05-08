@@ -262,11 +262,6 @@
         let rollResult, selectedCount, selectedRoll, selectedPiece; //global variables for DOM element
         displayOutsidePiece();
 
-        //to be deleted later
-        // $(".rolls").click(function () {
-        //     selectedRoll = event.target;
-        //     selectedCount = selectRoll()
-        // })
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
         var socket = io(); //initialises the socket.io object
@@ -275,26 +270,6 @@
             displayOntheMove(collateCount());
         })
 
-
-        //to be deleted later
-
-        // $("#count").click(function (e) {
-        //     let selected = localStorage.getItem("selected");
-        //     if (selected && selectedCount) {
-        //         let pieceCount = increasePieceCount(selectedCount, selected);
-        //         clearSelectedRoll();
-        //         clearAllSelected();
-        //         if (pieceCount) {
-        //             selectedCount = 0;
-        //             selectedRoll.textContent = 0;
-        //         }
-        //         localStorage.setItem("selected", "");
-        //     }
-        // });
-
-        // $("#r-id").dblclick(function(){
-
-        // })
 
 
         $("#room-id").text(playerRoom.id);
@@ -387,11 +362,17 @@
             if (data.userJoined) { //checks if the second user has 
                 $("#spinner-container").css('display', 'none'); //stops the spinner
             }
+            if (playerRoom.player == "one") {
+                playerRoom.playerOneConnected = true;
+            } else if (playerRoom.player == "two") {
+                playerRoom.playerTwoConnected = true;
+            }
         })
 
         //stops the spinner for the second user
         socket.on('a_user_joined', function () {
             $("#spinner-container").css('display', 'none');
+
         })
 
         //disables the selected roll after counting
@@ -452,17 +433,32 @@
         //emits roll result selection 
         socket.on("select_the_roll", function (data) {
             selectedRoll = $(`.${data[0]}`); //selects the roll result using the classnames sent from server
-            // console.log(selectedRoll.text());
-            // console.log(selectedRoll)
+
             rolls();
         })
 
         //handles connection
         socket.on('user_is_connected', function () {
-            socket.emit('a_user_connected', playerRoom)
+            if (playerRoom.player == "one") {
+                playerRoom.playerOneConnected = true;
+            } else if (playerRoom.player == "two") {
+                playerRoom.playerTwoConnected = true;
+            }
+            if (playerRoom.playerOneConnected && playerTwoConnected) {
+                socket.emit('all_user_connected', playerRoom)
+                console.log('all user connected')
+            }
+
         })
         socket.on('connection_lost', function () {
-            socket.emit('a_user_disconnected', playerRoom)
+            if (playerRoom.player == "one") {
+                playerRoom.playerOneConnected = false;
+            } else if (playerRoom.player == "two") {
+                playerRoom.playerTwoConnected = false;
+            }
+            $("#spinner-container2").css('display', 'block');
+            console.log('user disconnected')
+            // socket.emit('a_user_disconnected', playerRoom)
         })
         socket.on('on_connection', function () {
             $("#spinner-container2").css('display', 'none');
