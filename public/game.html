@@ -444,7 +444,7 @@
             } else if (playerRoom.player == "two") {
                 playerRoom.playerTwoConnected = true;
             }
-            if (playerRoom.playerOneConnected && playerTwoConnected) {
+            if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
                 socket.emit('all_user_connected', playerRoom)
                 console.log('all user connected')
             }
