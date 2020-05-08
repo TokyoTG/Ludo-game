@@ -522,7 +522,7 @@ function getPieceHouse(element) {
   if (arr.includes("celldrop")) {
     return arr[0];
   }
-  if (arr.includes("shadow")) {
+  if (arr.includes("shadow") && arr.length == 3) {
     return arr[1];
   }
   return arr[2];

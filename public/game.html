@@ -411,7 +411,7 @@
         socket.on("select_the_piece", function (data) {
             selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
             let house = getPieceHouse(selectedPiece)
-            // console.log(house)
+            console.log(house)
             if (checkPlayer(house, playerRoom.player)) {
                 // select()
                 socket.emit('selection_made', data);
