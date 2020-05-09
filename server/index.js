@@ -12,13 +12,15 @@ let roomList = [];
 io.on("connection", (socket) => {
   console.log("user connected");
   let socketRoom;
-  socket.on("connect", () => {
-    io.emit("user_is_connected", "play on");
-  });
+  // socket.on("connect", () => {
+  //   io.emit("user_is_connected", "play on");
+  // });
   socket.on("create_room", (data) => {
     roomList.push(data); //stores the room info in an array on the server
   });
-
+  socket.on("socket_connected", (data) => {
+    io.to(data.name).emit("user_is_connected", "play on");
+  });
   //updates the number of player in a room
   socket.on("updateRoom", (data) => {
     // if (data.numberOfplayers > 0) {
@@ -28,7 +30,7 @@ io.on("connection", (socket) => {
     // else {
     //   roomList.splice(roomList.indexOf(data), 1);
     // }
-    io.to(data.name).emit("user_is_connected", "play on");
+    // io.to(data.name).emit("user_is_connected", "play on");
     io.to(data.name).emit("a_user_joined", "stop spinner"); //stops the waiting spinner
     // console.log(roomList);
   });

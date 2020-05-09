@@ -450,6 +450,13 @@
             }
             console.log('player connected');
         })
+
+        socket.on('connect', () => {
+            socket.emit('socket_connected', playerRoom)
+            // console.log(socket.connected); // true
+        });
+
+
         socket.on('connection_lost', function () {
             if (playerRoom.player == "one") {
                 playerRoom.playerOneConnected = false;
