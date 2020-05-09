@@ -38,7 +38,7 @@
         <div class="cells" style="top: 40%;" data-index="51">
 
         </div>
-        <div class="cells g-starts dropdown" style="top: 40%;left:6.66%;" data-index="0">
+        <div class="cells g-starts" style="top: 40%;left:6.66%;" data-index="0">
         </div>
         <div class="cells" style="top: 40%;left:13.32%;" data-index="1">
 
@@ -200,10 +200,11 @@
         </ol>
     </div>
     <div>
-        <button id="count" onclick="emitCount()">Count seed</button>
-        <button id="quit">Exit Room</button>
-        <button id="reset">Reset Game</button>
-        <button type="button" id="roll-button" onclick="rollsDice()">Roll Dice</button>
+        <button class="button" id="count" onclick="emitCount()">Count seed</button>
+        <button class="button" id="reset-count" onclick="">forfiet Count</button>
+        <!-- <button class="button" id="reset">Reset Game</button> -->
+        <button type="button" class="button" id="roll-button" onclick="rollsDice()">Roll Dice</button>
+        <button class="button" id="quit">Exit Room</button>
         <p class="rolls one" onclick="emitSelectedRoll()">0</p>
         <p class="rolls two" onclick="emitSelectedRoll()">0</p>
     </div>
@@ -260,11 +261,6 @@
         let rollResult, selectedCount, selectedRoll, selectedPiece; //global variables for DOM element
         displayOutsidePiece();
 
-        //to be deleted later
-        // $(".rolls").click(function () {
-        //     selectedRoll = event.target;
-        //     selectedCount = selectRoll()
-        // })
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
         var socket = io(); //initialises the socket.io object
@@ -273,26 +269,6 @@
             displayOntheMove(collateCount());
         })
 
-
-        //to be deleted later
-
-        // $("#count").click(function (e) {
-        //     let selected = localStorage.getItem("selected");
-        //     if (selected && selectedCount) {
-        //         let pieceCount = increasePieceCount(selectedCount, selected);
-        //         clearSelectedRoll();
-        //         clearAllSelected();
-        //         if (pieceCount) {
-        //             selectedCount = 0;
-        //             selectedRoll.textContent = 0;
-        //         }
-        //         localStorage.setItem("selected", "");
-        //     }
-        // });
-
-        // $("#r-id").dblclick(function(){
-
-        // })
 
 
         $("#room-id").text(playerRoom.id);
@@ -333,10 +309,11 @@
                 socket.emit('roll_again', 'you can roll again')
             } else {
                 // console.log(rollAgain(...rollResult))
-                socket.emit('ok_disable_rolls', "disable");
-                socket.emit("you_are_nexts", playerRoom);
+                socket.emit('ok_disable_rolls', playerRoom);
+                // socket.emit("you_are_nexts", playerRoom);
             }
         })
+
 
         //disables the dice rolling function
         socket.on('disableRoll', function () {
@@ -366,7 +343,8 @@
             rolls.forEach((item) => {
                 item.setAttribute("onclick", "emitSelectedRoll()");
             });
-
+            let forfietBtn = document.getElementById("reset-count");
+            forfietBtn.setAttribute("onclick", "forfietCount()");
         })
 
         //initializes dice rolling
@@ -388,14 +366,35 @@
         //stops the spinner for the second user
         socket.on('a_user_joined', function () {
             $("#spinner-container").css('display', 'none');
+
         })
 
         //disables the selected roll after counting
         socket.on("you_can_disable", function (data) {
             // console.log('hi');
+            let rollresults1 = $(".rolls.one");
+            let rollresults2 = $(".rolls.two");
             selectedRoll.attr("onclick", "");
+            if (rollresults1.text() == "0" && rollresults2.text() == "0") {
+                console.log('done counting');
+                socket.emit("you_are_nexts", playerRoom);
+            }
         })
 
+        socket.on("reset_rolls", function () {
+            let rolls = [...document.getElementsByClassName("rolls")];
+            rolls.forEach((item) => {
+                item.setAttribute("onclick", "");
+                item.textContent = 0;
+            });
+            let forfietBtn = document.getElementById("reset-count");
+            forfietBtn.setAttribute("onclick", "");
+            // socket.emit("you_are_nexts", playerRoom);
+        })
+
+        socket.on("send_turn", function () {
+            socket.emit("you_are_nexts", playerRoom);
+        })
         //emits the counting to the room
         socket.on("counting", function () {
 
@@ -428,24 +427,58 @@
         //emits roll result selection 
         socket.on("select_the_roll", function (data) {
             selectedRoll = $(`.${data[0]}`); //selects the roll result using the classnames sent from server
-            // console.log(selectedRoll.text());
-            // console.log(selectedRoll)
+
             rolls();
         })
 
         //handles connection
         socket.on('user_is_connected', function () {
-            socket.emit('a_user_connected', playerRoom)
+            if (playerRoom.player == "one") {
+                playerRoom.playerOneConnected = true;
+            } else if (playerRoom.player == "two") {
+                playerRoom.playerTwoConnected = true;
+            }
+            // if (!playerRoom.userDisconnect) {
+            //     socket.emit('all_user_connected', playerRoom)
+            //     console.log('all user connected')
+            // }
+            // if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
+            socket.emit('all_user_connected', playerRoom)
+            console.log('all user connected')
+            // }
+            console.log('player connected');
         })
+
+        socket.on('connect', () => {
+            socket.emit('socket_connected', playerRoom)
+            // console.log('player connectedss');
+            // console.log(socket.connected); // true
+        });
+
+        socket.on("disconnect", () => {
+            if (playerRoom.player == "one") {
+                playerRoom.playerOneConnected = false;
+            } else if (playerRoom.player == "two") {
+                playerRoom.playerTwoConnected = false;
+            }
+            $("#spinner-container2").css('display', 'block');
+            console.log('user disconnected')
+            socket.open();
+            // socket.socket.reconnect();
+        });
         socket.on('connection_lost', function () {
-            socket.emit('a_user_disconnected', playerRoom)
+
+            // playerRoom.userDisconnect = true;
+            $("#spinner-container2").css('display', 'block');
+            // console.log('user disconnected')
+            // socket.emit('a_user_disconnected', playerRoom)
         })
         socket.on('on_connection', function () {
             $("#spinner-container2").css('display', 'none');
         })
-        socket.on("user_disconnects", function () {
-            $("#spinner-container2").css('display', 'block');
-        })
+        // socket.on("user_disconnects", function () {
+        //     $("#spinner-container2").css('display', 'block');
+        // })
     </script>
 </body>
 

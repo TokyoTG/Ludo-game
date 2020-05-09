@@ -351,7 +351,10 @@ li.dropdown {
 
 .rolls {
   font-weight: 700;
-  font-size: 1.2em;
+  font-size: 1.3em;
+  margin-left: 10px;
+  margin-top: 20px;
+  cursor: pointer;
   display: inline-block;
   background: greenyellow;
   padding: 5px 10px;
