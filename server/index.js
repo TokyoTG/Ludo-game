@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
     io.to(data.name).emit("user_disconnects", "add spinner");
   });
   socket.on("disconnect", () => {
-    socket.to(socketRoom).emit("connection_lost", "try refreshing");
+    io.to(socketRoom).emit("connection_lost", "try refreshing");
     // socket.rooms;
     // console.log(socketRoom);
   });

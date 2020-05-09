@@ -443,16 +443,16 @@
             //     socket.emit('all_user_connected', playerRoom)
             //     console.log('all user connected')
             // }
-            if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
-                socket.emit('all_user_connected', playerRoom)
-                console.log('all user connected')
-            }
-            console.log('player connecteds');
+            // if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
+            socket.emit('all_user_connected', playerRoom)
+            console.log('all user connected')
+            // }
+            console.log('player connected');
         })
 
         socket.on('connect', () => {
             socket.emit('socket_connected', playerRoom)
-            // console.log('player connected');
+            // console.log('player connectedss');
             // console.log(socket.connected); // true
         });
 
