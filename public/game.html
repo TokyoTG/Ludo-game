@@ -465,6 +465,7 @@
             $("#spinner-container2").css('display', 'block');
             console.log('user disconnected')
             socket.open();
+            socket.socket.reconnect();
         });
         socket.on('connection_lost', function () {
 

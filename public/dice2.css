@@ -211,6 +211,10 @@ button:hover {
   box-shadow: 0 9px #999;
 }
 
+#quit {
+  background: #ef5350;
+}
+
 .button:hover {
   background-color: #3e8e41;
 }
