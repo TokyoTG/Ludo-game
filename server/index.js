@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
     io.to(data.name).emit("user_disconnects", "add spinner");
   });
   socket.on("disconnect", () => {
-    io.to(socketRoom).emit("connection_lost", "try refreshing");
+    socket.to(socketRoom).emit("connection_lost", "try refreshing");
     // socket.rooms;
     // console.log(socketRoom);
   });
