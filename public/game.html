@@ -362,11 +362,6 @@
             if (data.userJoined) { //checks if the second user has 
                 $("#spinner-container").css('display', 'none'); //stops the spinner
             }
-            if (playerRoom.player == "one") {
-                playerRoom.playerOneConnected = true;
-            } else if (playerRoom.player == "two") {
-                playerRoom.playerTwoConnected = true;
-            }
         })
 
         //stops the spinner for the second user
@@ -473,14 +468,14 @@
         });
         socket.on('connection_lost', function () {
 
-            playerRoom.userDisconnect = true;
+            // playerRoom.userDisconnect = true;
             $("#spinner-container2").css('display', 'block');
             // console.log('user disconnected')
             // socket.emit('a_user_disconnected', playerRoom)
         })
-        // socket.on('on_connection', function () {
-        //     $("#spinner-container2").css('display', 'none');
-        // })
+        socket.on('on_connection', function () {
+            $("#spinner-container2").css('display', 'none');
+        })
         // socket.on("user_disconnects", function () {
         //     $("#spinner-container2").css('display', 'block');
         // })
