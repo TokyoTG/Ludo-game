@@ -444,6 +444,10 @@
             } else if (playerRoom.player == "two") {
                 playerRoom.playerTwoConnected = true;
             }
+            // if (!playerRoom.userDisconnect) {
+            //     socket.emit('all_user_connected', playerRoom)
+            //     console.log('all user connected')
+            // }
             if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
                 socket.emit('all_user_connected', playerRoom)
                 console.log('all user connected')
@@ -453,11 +457,11 @@
 
         socket.on('connect', () => {
             socket.emit('socket_connected', playerRoom)
+            console.log('player connected');
             // console.log(socket.connected); // true
         });
 
-
-        socket.on('connection_lost', function () {
+        socket.on("disconnect", () => {
             if (playerRoom.player == "one") {
                 playerRoom.playerOneConnected = false;
             } else if (playerRoom.player == "two") {
@@ -465,14 +469,25 @@
             }
             $("#spinner-container2").css('display', 'block');
             console.log('user disconnected')
+            socket.open();
+        });
+        socket.on('connection_lost', function () {
+            // if (playerRoom.player == "one") {
+            //     playerRoom.playerOneConnected = false;
+            // } else if (playerRoom.player == "two") {
+            //     playerRoom.playerTwoConnected = false;
+            // }
+            playerRoom.userDisconnect = true;
+            // $("#spinner-container2").css('display', 'block');
+            // console.log('user disconnected')
             // socket.emit('a_user_disconnected', playerRoom)
         })
-        socket.on('on_connection', function () {
-            $("#spinner-container2").css('display', 'none');
-        })
-        socket.on("user_disconnects", function () {
-            $("#spinner-container2").css('display', 'block');
-        })
+        // socket.on('on_connection', function () {
+        //     $("#spinner-container2").css('display', 'none');
+        // })
+        // socket.on("user_disconnects", function () {
+        //     $("#spinner-container2").css('display', 'block');
+        // })
     </script>
 </body>
 
