@@ -447,12 +447,12 @@
                 socket.emit('all_user_connected', playerRoom)
                 console.log('all user connected')
             }
-            console.log('player connected');
+            console.log('player connecteds');
         })
 
         socket.on('connect', () => {
             socket.emit('socket_connected', playerRoom)
-            console.log('player connected');
+            // console.log('player connected');
             // console.log(socket.connected); // true
         });
 
@@ -465,7 +465,7 @@
             $("#spinner-container2").css('display', 'block');
             console.log('user disconnected')
             socket.open();
-            socket.socket.reconnect();
+            // socket.socket.reconnect();
         });
         socket.on('connection_lost', function () {
 

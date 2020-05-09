@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 
 let roomList = [];
 io.on("connection", (socket) => {
-  console.log("user connected");
   let socketRoom;
   // socket.on("connect", () => {
   //   io.emit("user_is_connected", "play on");
