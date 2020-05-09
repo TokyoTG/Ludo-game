@@ -472,13 +472,9 @@
             socket.open();
         });
         socket.on('connection_lost', function () {
-            // if (playerRoom.player == "one") {
-            //     playerRoom.playerOneConnected = false;
-            // } else if (playerRoom.player == "two") {
-            //     playerRoom.playerTwoConnected = false;
-            // }
+
             playerRoom.userDisconnect = true;
-            // $("#spinner-container2").css('display', 'block');
+            $("#spinner-container2").css('display', 'block');
             // console.log('user disconnected')
             // socket.emit('a_user_disconnected', playerRoom)
         })
