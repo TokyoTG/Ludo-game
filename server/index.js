@@ -12,7 +12,9 @@ let roomList = [];
 io.on("connection", (socket) => {
   console.log("user connected");
   let socketRoom;
-  io.emit("user_is_connected", "play on");
+  socket.on("connect", () => {
+    io.emit("user_is_connected", "play on");
+  });
   socket.on("create_room", (data) => {
     roomList.push(data); //stores the room info in an array on the server
   });
