@@ -135,7 +135,8 @@ body {
   font-style: italic;
 }
 
-#toast {
+#toast,
+.turn-toast {
   background: #263238;
   position: absolute;
   color: white;

@@ -551,7 +551,6 @@ function copyRoomId() {
   /* Copy the text inside the text field */
   document.execCommand("copy");
   setTimeout(function () {
-    copyAlert = document.getElementById("toast");
     copyAlert.style.display = "none";
   }, 1000);
 }
@@ -694,6 +693,7 @@ function is_your_turn() {
   });
   let forfietBtn = document.getElementById("reset-count");
   forfietBtn.setAttribute("onclick", "");
+  displayPlayerTurn();
 }
 
 function emitCount() {
@@ -739,3 +739,11 @@ function forfietCount() {
 //      item.setAttribute("onclick", "");
 //    });
 // }
+
+function displayPlayerTurn() {
+  let copyAlert = document.getElementById("toast2");
+  copyAlert.style.display = "block";
+  setTimeout(function () {
+    copyAlert.style.display = "none";
+  }, 1000);
+}
