@@ -271,8 +271,10 @@
         socket.on("update_local", data => {
             localStorage.roomObj = JSON.stringify(data);
             if (!data.playerOneConnected || !data.playerTwoConnected) {
+                $("#spinner-container").css('display', 'block');
                 $("#spinner-container2").css('display', 'block');
             } else {
+                $("#spinner-container").css('display', 'none');
                 $("#spinner-container2").css('display', 'none');
             }
         })
@@ -409,10 +411,16 @@
 
         //indicates a user join
         socket.on("user", function (data) {
+            if (playerObj.player == "one") {
+                playerRoom.playerOneConnected = true;
+            } else if (playerObj.player == "two") {
+                playerRoom.playerTwoConnected = true;
+            }
             console.log(` ${data.playerName} Joined ${data.name} room`)
-            if (data.userJoined) { //checks if the second user has 
+            if (data.playerOneConnected && data.playerTwoConnected) { //checks if the second user has
                 $("#spinner-container").css('display', 'none'); //stops the spinner
             }
+            socket.emit('update_local_roomObj', playerRoom);
         })
 
         //stops the spinner for the second user
@@ -503,6 +511,12 @@
         })
 
         socket.on('connect', () => {
+            if (playerObj.player == "one") {
+                playerRoom.playerOneConnected = true;
+            } else if (playerObj.player == "two") {
+                playerRoom.playerTwoConnected = true;
+            }
+            socket.emit('update_local_roomObj', playerRoom);
             socket.emit('socket_connected', playerRoom)
             // console.log('player connectedss');
             // console.log(socket.connected); // true
@@ -520,13 +534,7 @@
             socket.open();
             // socket.socket.reconnect();
         });
-        socket.on('connection_lost', function () {
 
-            // playerRoom.userDisconnect = true;
-            $("#spinner-container2").css('display', 'block');
-            // console.log('user disconnected')
-            // socket.emit('a_user_disconnected', playerRoom)
-        })
         socket.on('on_connection', function () {
             $("#spinner-container2").css('display', 'none');
         })
