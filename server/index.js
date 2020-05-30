@@ -38,23 +38,40 @@ io.on("connection", (socket) => {
     // user: "Tokyo",
     // password: "1234",
     // database: "ludo_db",
-    connectTimeout: 50000,
+    // connectTimeout: 50000,
     host: "us-cdbr-east-06.cleardb.net",
     user: "bbd595c0cfc9d8",
     password: "471a0423",
     database: "heroku_0ac0f4b1f9afa39",
   });
-  const pool = mysql.createPool({
-    host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
-    database: "heroku_0ac0f4b1f9afa39",
+  connection.on("error", function () {
+    connection = mysql.createConnection({
+      // host: "localhost",
+      // user: "Tokyo",
+      // password: "1234",
+      // database: "ludo_db",
+      // connectTimeout: 50000,
+      host: "us-cdbr-east-06.cleardb.net",
+      user: "bbd595c0cfc9d8",
+      password: "471a0423",
+      database: "heroku_0ac0f4b1f9afa39",
+    });
   });
+  // const pool = mysql.createPool({
+  //   host: "us-cdbr-east-06.cleardb.net",
+  //   user: "bbd595c0cfc9d8",
+  //   password: "471a0423",
+  //   database: "heroku_0ac0f4b1f9afa39",
+  //   // host: "localhost",
+  //   // user: "Tokyo",
+  //   // password: "1234",
+  //   // database: "ludo_db",
+  // });
 
-  // ... later
-  pool.query("select 1 + 1", (err, rows) => {
-    /* */
-  });
+  // // ... later
+  // pool.query("select 1 + 1", (err, rows) => {
+  //   /* */
+  // });
   try {
     connection.connect(function (err) {
       if (err) {
@@ -109,8 +126,10 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        socket.emit("send_room_data", result[0].games);
+      if (result) {
+        if (result.length) {
+          socket.emit("send_room_data", result[0].games);
+        }
       }
     });
   });
@@ -156,8 +175,10 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        dbrooms = result;
+      if (result) {
+        if (result.length) {
+          dbrooms = result;
+        }
       }
     });
     io.emit("all_rooms", dbrooms);
@@ -170,10 +191,12 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        let numOfConn = result[0].connected;
-        if (numOfConn > 1) {
-          io.to(data.name).emit("user_is_connected", "play on");
+      if (result) {
+        if (result.length) {
+          let numOfConn = result[0].connected;
+          if (numOfConn > 1) {
+            io.to(data.name).emit("user_is_connected", "play on");
+          }
         }
       }
     });
@@ -195,8 +218,10 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        dbrooms = result;
+      if (result) {
+        if (result.length) {
+          dbrooms = result;
+        }
       }
     });
     io.emit("all_rooms", dbrooms);
@@ -215,8 +240,10 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        dbrooms = result;
+      if (result) {
+        if (result.length) {
+          dbrooms = result;
+        }
       }
     });
     io.emit("all_rooms", dbrooms);
@@ -279,8 +306,10 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      if (result.length) {
-        dbrooms = result;
+      if (result) {
+        if (result.length) {
+          dbrooms = result;
+        }
       }
     });
     io.emit("all_rooms", dbrooms);
