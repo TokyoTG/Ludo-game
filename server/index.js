@@ -44,6 +44,17 @@ io.on("connection", (socket) => {
     password: "471a0423",
     database: "heroku_0ac0f4b1f9afa39",
   });
+  const pool = mysql.createPool({
+    host: "us-cdbr-east-06.cleardb.net",
+    user: "bbd595c0cfc9d8",
+    password: "471a0423",
+    database: "heroku_0ac0f4b1f9afa39",
+  });
+
+  // ... later
+  pool.query("select 1 + 1", (err, rows) => {
+    /* */
+  });
   try {
     connection.connect(function (err) {
       if (err) {
