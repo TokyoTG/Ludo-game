@@ -502,4 +502,20 @@ module.exports = {
     };
     return obj;
   },
+  getallrooms(connection) {
+    var res;
+    query = `SELECT name,playerOne,playerTwo,room_ID FROM rooms`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result.length) {
+        dbrooms = result;
+        return res;
+      }
+    });
+
+    // io.emit("all_rooms", dbrooms);
+  },
 };

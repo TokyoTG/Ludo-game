@@ -31,20 +31,19 @@ const PORT = process.env.PORT || 5000;
 
 //main game
 let roomList = [];
-let connectedRooms = [];
+let socketRoom;
 io.on("connection", (socket) => {
   var connection = mysql.createConnection({
-    host: "localhost",
-    user: "Tokyo",
-    password: "1234",
-    database: "ludo_db",
-    // connectTimeout: 20000,
-    // host: "us-cdbr-east-06.cleardb.net",
-    // user: "bbd595c0cfc9d8",
-    // password: "471a0423",
-    // database: "heroku_0ac0f4b1f9afa39",
+    // host: "localhost",
+    // user: "Tokyo",
+    // password: "1234",
+    // database: "ludo_db",
+    connectTimeout: 50000,
+    host: "us-cdbr-east-06.cleardb.net",
+    user: "bbd595c0cfc9d8",
+    password: "471a0423",
+    database: "heroku_0ac0f4b1f9afa39",
   });
-
   try {
     connection.connect(function (err) {
       if (err) {
@@ -59,7 +58,6 @@ io.on("connection", (socket) => {
     console.log(error);
   }
 
-  let socketRoom;
   let query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
   try {
     connection.query(query, function (err, result) {
@@ -133,7 +131,7 @@ io.on("connection", (socket) => {
     roomList.push(data); //stores the room info in an array on the server
     let query = `
     INSERT INTO rooms(room_ID, creator, playerOne,games,name,connected) 
-    VALUES ('${data.id}','${data.playerName}','${data.playerName}','${roomData}','${data.name}',0)`;
+    VALUES ('${data.id}','${data.playerName}','${data.playerName}','${roomData}','${data.name}',1)`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -141,7 +139,7 @@ io.on("connection", (socket) => {
       }
       console.log("Table created");
     });
-    query = `SELECT name,playerOne,playerTwo,room_ID FROM rooms`;
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -164,8 +162,6 @@ io.on("connection", (socket) => {
       if (result.length) {
         let numOfConn = result[0].connected;
         if (numOfConn > 1) {
-          console.log("checked");
-          console.log(data.name);
           io.to(data.name).emit("user_is_connected", "play on");
         }
       }
@@ -182,6 +178,17 @@ io.on("connection", (socket) => {
         //throw err;
       }
     });
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result.length) {
+        dbrooms = result;
+      }
+    });
+    io.emit("all_rooms", dbrooms);
   });
   socket.on("increase_num_of_connected", (data) => {
     let query = `UPDATE rooms SET  connected = connected + 1 WHERE room_ID= '${data.id}'`;
@@ -191,6 +198,17 @@ io.on("connection", (socket) => {
         //throw err;
       }
     });
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result.length) {
+        dbrooms = result;
+      }
+    });
+    io.emit("all_rooms", dbrooms);
   });
   //sends out the room object
   io.emit("rooms", roomList);
@@ -244,6 +262,17 @@ io.on("connection", (socket) => {
       //   socket.emit("validation_error", "incorrect room id");
       // }
     });
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result.length) {
+        dbrooms = result;
+      }
+    });
+    io.emit("all_rooms", dbrooms);
     io.to(data.name).emit("add_spinner", "spinner in action"); //notifies the user when the other user left
   });
 

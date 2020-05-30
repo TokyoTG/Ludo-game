@@ -105,13 +105,8 @@
         name: roomName,
         creator: playerName,
         id: generateRoomId(),
-        numberOfPlayers: 1,
         playerName: playerName,
         player: 'one',
-        userDisconnect: false,
-        playerOneConnected: true,
-        playerTwoConnected: false,
-        userJoined: false
       }
       let playerObj = {
         playerName: playerName,
@@ -120,12 +115,10 @@
         player: 'one',
       }
       localStorage.clear();
-      objectSetter(2);
-      // storePiece();
-      localStorage.playerObj = JSON.stringify(playerObj);
-      localStorage.setItem('roomObj', JSON.stringify(roomObj))
+      // localStorage.playerObj = JSON.stringify(playerObj);
+      localStorage.setItem('playerObj', JSON.stringify(roomObj))
       socket.emit('create_room', roomObj);
-      localStorage.player1 = JSON.stringify(roomObj);
+      // localStorage.player1 = JSON.stringify(roomObj);
       location.assign('./game.html');
     })
 
@@ -136,25 +129,6 @@
 
     let rooms;
     let dbrooms;
-    //gets available room list
-    //     socket.on('rooms', function (data) {
-    //       if (data.length) {
-    //         let text = ""
-    //         rooms = data;
-    //         $("#roomList").html('');
-    //         for (let item of data) {
-    //           if (item.numberOfPlayers < 1) {
-    //             text += `
-    //  <li class="list-item" onclick="getroomName()">${item.name}</li>
-    //         `
-    //           }
-    //         }
-    //         $("#roomList").html(text);
-    //         console.log(data)
-    //       }
-
-    //     })
-
 
     function generateRoomId() {
       let roomId = "";
@@ -215,9 +189,15 @@
           };
           if (item.connected <= 2) {
             if (selection == 'one') {
-              playerObj.player = 'one';
-              playerObj.playerName = item.playerOne
-              socket.emit("increase_num_of_connected", playerObj);
+              if (item.connected == 0) {
+                playerObj.player = 'one';
+                playerObj.playerName = item.playerOne
+                socket.emit("increase_num_of_connected", playerObj);
+                localStorage.playerObj = JSON.stringify(playerObj);
+              } else {
+                location.assign('index.html')
+                return "No";
+              }
             } else if (selection == 'two') {
               playerObj.player = 'two';
               if (item.playerTwo != null) {
@@ -228,9 +208,9 @@
                 playerObj.playerName = playerName
                 socket.emit("update_player_two", playerObj);
               }
+              localStorage.playerObj = JSON.stringify(playerObj);
             }
-            location.assign('./game.html')
-            localStorage.playerObj = JSON.stringify(playerObj);
+            location.assign('./game.html');
           }
           // if (localStorage.roomObj != null && localStorage.roomObj != '') {
           //   roomObj = JSON.parse(localStorage.roomObj);
@@ -252,13 +232,6 @@
           //   roomObj.connectedPlayers = [];
           //   roomObj.connectedPlayers.push(playerName);
           //   localStorage.roomObj = JSON.stringify(roomObj);
-          // }
-          // localStorage.playerObj = JSON.stringify(playerObj);
-
-          // objectSetter(2);
-
-          // storePiece();
-          socket.emit('updateRoom', joinObj);
           // socket.emit("get_room_data", roomId);
           // localStorage.setItem('roomObj', JSON.stringify(joinObj))
           // location.assign('./game.html')
@@ -266,6 +239,7 @@
       }
 
     })
+
     socket.on('validated', data => {
       location.assign('./game.html')
     })
