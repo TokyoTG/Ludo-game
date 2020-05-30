@@ -57,23 +57,26 @@ function objectSetter(num) {
         },
       ],
     };
-
     //Stores the object in localstorage
     storePlayerObjects(playerOneObject, playerTwoObject);
   }
 }
 
 function storePlayerObjects(obj1, obj2) {
-  localStorage.setItem("playerOne", JSON.stringify(obj1));
-  localStorage.setItem("playerTwo", JSON.stringify(obj2));
+  // localStorage.setItem("playerOne", JSON.stringify(obj1));
+  // localStorage.setItem("playerTwo", JSON.stringify(obj2));
 }
 
 function modifyObject(house, player, pieceNmuber) {
   //assigns objects to array of player objects returned by objectRetriever
-  let objects = objectRetriever();
+  // let objects = objectRetriever();
+  let updateObj = {
+    id: playerRoom.id,
+  };
+  let arrr = [roomData.playerOne, roomData.playerTwo];
   let index;
   //loop through objects to check the player and house to modify
-  for (let object of objects) {
+  for (let object of arrr) {
     if (player == object.player) {
       for (let item of object.pieceDetails) {
         if (item.house == house && item.pieceNmuber.includes(pieceNmuber)) {
@@ -83,8 +86,14 @@ function modifyObject(house, player, pieceNmuber) {
       }
     }
   }
-  storePlayerObjects(...objects);
-  seedDisplay(objectRetriever());
+  // storePlayerObjects(...arr);
+  updateObj.roomData = roomData;
+  console.log(roomData);
+  socket.emit("update_room_data", updateObj);
+  // socket.emit("get_room_data", playerRoom.id);
+  seedDisplay(arrr);
+  // storePlayerObjects(...objects);
+  // seedDisplay(objectRetriever());
 }
 
 function objectRetriever() {
@@ -167,6 +176,13 @@ function increasePieceCount(num, code) {
   }
 
   localStorage.setItem(code, JSON.stringify(seedDetails));
+  let currentCollatedCounts = collateCount(seedDetails.house);
+  let countObj = {
+    id: playerRoom.id,
+    count: JSON.stringify(currentCollatedCounts),
+  };
+  console.log(countObj.count);
+  socket.emit("store_piece_array", countObj);
   displayOntheMove(collateCount(seedDetails.house));
   displayOntheMove(collateCount(seedDetails.house));
   return true;
@@ -343,8 +359,12 @@ function resetPieceCount(element) {
 
 function addPieceBackToHouse(element) {
   // adds the piece back to house when the occupied piece player is different
-  let objects = objectRetriever();
-  for (let object of objects) {
+  // let objects = objectRetriever();
+  let updateObj = {
+    id: playerRoom.id,
+  };
+  let arrr = [roomData.playerOne, roomData.playerTwo];
+  for (let object of arrr) {
     if (element.player == object.player) {
       for (let item of object.pieceDetails) {
         if (item.house == element.house) {
@@ -353,8 +373,11 @@ function addPieceBackToHouse(element) {
       }
     }
   }
-  storePlayerObjects(...objects);
-  seedDisplay(objectRetriever());
+  updateObj.roomData = roomData;
+  console.log(roomData);
+  socket.emit("update_room_data", updateObj);
+  // storePlayerObjects(...objects);
+  seedDisplay(arrr);
 }
 
 function goHouse(element) {
@@ -615,14 +638,22 @@ function selectRoll() {
 
 function addToOutside(element) {
   let num = element.pieceNmuber + "-" + element.house;
-  let objects = objectRetriever();
-  for (let object of objects) {
+  let updateObj = {
+    id: playerRoom.id,
+  };
+  let arrr = [roomData.playerOne, roomData.playerTwo];
+  // let objects = objectRetriever();
+  for (let object of arrr) {
     if (element.player == object.player) {
       object.outPiece[num] = element.house;
     }
   }
-  storePlayerObjects(...objects);
-  displayOutsidePiece();
+  updateObj.roomData = roomData;
+  console.log(roomData);
+  socket.emit("update_room_data", updateObj);
+  storePlayerObjects(...arrr);
+  displayDbOutsidePiece(arrr);
+  // displayOutsidePiece();
 }
 
 function displayOutsidePiece() {

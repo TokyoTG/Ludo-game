@@ -254,24 +254,73 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="./index.js"></script>
+    <script src="sql.js"></script>
     <script>
         if (localStorage.getItem('roomObj') == '') {
             location.replace('index.html') //redirects when the user is not in any room
         }
-
-
-        let rollResult, selectedCount, selectedRoll, selectedPiece; //global variables for DOM element
-        displayOutsidePiece();
-
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
+        let playerObj = JSON.parse(localStorage.playerObj);
+        // let mainRoomObj = JSON.parse(localStorage.)
         var socket = io(); //initialises the socket.io object
-        $(document).ready(function () {
-            seedDisplay(objectRetriever());
-            displayOntheMove(collateCount());
+        //gets the requested room data
+
+
+        // updates the roomobj on localstorage
+        socket.on("update_local", data => {
+            localStorage.roomObj = JSON.stringify(data);
+            if (!data.playerOneConnected || !data.playerTwoConnected) {
+                $("#spinner-container2").css('display', 'block');
+            } else {
+                $("#spinner-container2").css('display', 'none');
+            }
         })
 
+        let rollResult, selectedCount, selectedRoll, selectedPiece, roomData; //global variables for DOM element
+        // displayOutsidePiece();
 
+
+
+
+        $(document).ready(function () {
+            // seedDisplay(objectRetriever());
+            socket.emit("first_room_data", playerRoom.id);
+        })
+        socket.on('sent_room_data', data => {
+            roomData = JSON.parse(data);
+            let arrr = [roomData.playerOne, roomData.playerTwo];
+            localStorage.orp = JSON.stringify(arrr);
+            seedDisplay(arrr);
+            storePieceDb(arrr);
+            displayDbOutsidePiece(arrr);
+            let piece_collated = collateCount();
+            displayOntheMove(piece_collated);
+            // let countObj = {
+            //     id: playerRoom.id,
+            //     count: JSON.stringify(piece_collated)
+            // }
+            // console.log(countObj.count);
+            // socket.emit('store_piece_array', countObj);
+        });
+
+        socket.on('send_room_data', data => {
+            roomData = JSON.parse(data.games);
+            let counts = JSON.parse(data.counts)
+            let arrr = [roomData.playerOne, roomData.playerTwo];
+            localStorage.orp = JSON.stringify(arrr);
+            seedDisplay(arrr);
+            reverseStorage(counts);
+            displayDbOutsidePiece(arrr);
+            let piece_collated = collateCount();
+            displayOntheMove(piece_collated);
+            let countObj = {
+                id: playerRoom.id,
+                count: JSON.stringify(collateCount())
+            }
+            console.log(countObj.count);
+            socket.emit('store_piece_array', countObj);
+        });
 
         $("#room-id").text(playerRoom.id);
         $("#copy").attr('value', `${playerRoom.id}`)
@@ -349,6 +398,7 @@
             forfietBtn.setAttribute("onclick", "forfietCount()");
         })
 
+
         //initializes dice rolling
         function rollsDice() {
             socket.emit('rolldice', playerRoom);
@@ -413,7 +463,7 @@
             selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
             let house = getPieceHouse(selectedPiece)
             // console.log(house)
-            if (checkPlayer(house, playerRoom.player)) {
+            if (checkPlayer(house, playerObj.player)) {
                 // select()
                 socket.emit('selection_made', data);
             } else {
@@ -435,20 +485,21 @@
 
         //handles connection
         socket.on('user_is_connected', function () {
-            if (playerRoom.player == "one") {
+            if (playerObj.player == "one") {
                 playerRoom.playerOneConnected = true;
-            } else if (playerRoom.player == "two") {
+            } else if (playerObj.player == "two") {
                 playerRoom.playerTwoConnected = true;
             }
+            socket.emit('update_local_roomObj', playerRoom);
             // if (!playerRoom.userDisconnect) {
             //     socket.emit('all_user_connected', playerRoom)
             //     console.log('all user connected')
             // }
             // if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
             socket.emit('all_user_connected', playerRoom)
-            console.log('all user connected')
-            // }
-            console.log('player connected');
+            // console.log('all user connected')
+            // // }
+            // console.log('player connected');
         })
 
         socket.on('connect', () => {
@@ -465,6 +516,7 @@
             }
             $("#spinner-container2").css('display', 'block');
             console.log('user disconnected')
+            socket.emit('update_local_roomObj', playerRoom);
             socket.open();
             // socket.socket.reconnect();
         });

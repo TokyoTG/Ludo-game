@@ -83,21 +83,31 @@
         playerName: playerName,
         player: 'one',
         userDisconnect: false,
-        playerOneConnected: false,
+        playerOneConnected: true,
         playerTwoConnected: false,
         userJoined: false
       }
+      let playerObj = {
+        playerName: playerName,
+        id: generateRoomId(),
+        name: roomName,
+        player: 'one',
+      }
       localStorage.clear();
       objectSetter(2);
-      storePiece();
+      // storePiece();
+      localStorage.playerObj = JSON.stringify(playerObj);
       localStorage.setItem('roomObj', JSON.stringify(roomObj))
       socket.emit('create_room', roomObj);
+      localStorage.player1 = JSON.stringify(roomObj);
       location.assign('./game.html');
     })
 
 
-    let rooms;
 
+
+    let rooms;
+    let dbrooms;
     //gets available room list
     socket.on('rooms', function (data) {
       if (data.length) {
@@ -133,25 +143,61 @@
       return roomId;
     }
 
-
+    socket.on('all_rooms', data => {
+      console.log(data);
+      dbrooms = data
+    })
     $("#join").submit(function (e) {
       e.preventDefault()
-      let playerName = $("#player-name").val();
-      let roomId = $("#room-id").val()
-      for (let item of rooms) {
-        if (item.id == roomId) {
-          item.numberOfPlayers += 1;
-          item.playerName = playerName;
-          item.userJoined = true
-          item.player = 'two';
-          localStorage.clear();
+      let playerName = $("#player-name").val().trim();
+      let roomId = $("#room-id").val().trim();
+      let joinObj = {
+        id: roomId,
+        playerName: playerName,
+        userJoined: true,
+        player: 'two'
+      }
+      for (let item of dbrooms) {
+        if (item.room_ID == roomId) {
+          joinObj.name = item.name;
+          let playerObj = {
+            playerName: playerName,
+            id: roomId,
+            name: item.name,
+            player: 'two',
+          };
+          if (localStorage.roomObj != null && localStorage.roomObj != '') {
+            roomObj = JSON.parse(localStorage.roomObj);
+            roomObj.playerTwoConnected = true;
+            roomObj.userJoined = true;
+            localStorage.roomObj = JSON.stringify(roomObj);
+            socket.emit('update_local_roomObj', roomObj);
+          } else {
+            roomObj = {
+              name: item.name,
+              id: roomId,
+              userDisconnect: false,
+              playerOneConnected: true,
+              playerTwoConnected: false,
+              userJoined: false
+            }
+            localStorage.roomObj = JSON.stringify(roomObj);
+          }
+          localStorage.playerObj = JSON.stringify(playerObj);
+
           objectSetter(2);
-          storePiece();
-          socket.emit('updateRoom', item);
-          localStorage.setItem('roomObj', JSON.stringify(item))
-          location.assign('./game.html')
+
+          // storePiece();
+          socket.emit('updateRoom', joinObj);
+          // socket.emit("get_room_data", roomId);
+          // localStorage.setItem('roomObj', JSON.stringify(joinObj))
+          // location.assign('./game.html')
         }
       }
+
+    })
+    socket.on('validated', data => {
+      location.assign('./game.html')
     })
   </script>
 </body>

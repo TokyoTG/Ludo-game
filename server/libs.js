@@ -446,4 +446,60 @@ module.exports = {
     let ran2 = Math.floor(Math.random() * (max - min + 1)) + min;
     return [ran1, ran2];
   },
+  roomData: function () {
+    let playerOneObject = {
+      player: "one",
+      outPiece: {},
+      pieceDetails: [
+        {
+          house: "green",
+          pieceNmuber: [
+            "square-one",
+            "square-two",
+            "square-three",
+            "square-four",
+          ],
+        },
+        {
+          house: "yellow",
+          pieceNmuber: [
+            "square-one",
+            "square-two",
+            "square-three",
+            "square-four",
+          ],
+        },
+      ],
+    };
+
+    let playerTwoObject = {
+      player: "two",
+      outPiece: {},
+      pieceDetails: [
+        {
+          house: "red",
+          pieceNmuber: [
+            "square-one",
+            "square-two",
+            "square-three",
+            "square-four",
+          ],
+        },
+        {
+          house: "blue",
+          pieceNmuber: [
+            "square-one",
+            "square-two",
+            "square-three",
+            "square-four",
+          ],
+        },
+      ],
+    };
+    let obj = {
+      playerOne: playerOneObject,
+      playerTwo: playerTwoObject,
+    };
+    return obj;
+  },
 };
