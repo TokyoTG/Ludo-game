@@ -256,35 +256,34 @@
     <script src="./index.js"></script>
     <script src="sql.js"></script>
     <script>
-        if (localStorage.getItem('roomObj') == '') {
+        if (localStorage.getItem('playerObj') == '') {
             location.replace('index.html') //redirects when the user is not in any room
         }
+        var socket = io(); //initialises the socket.io object
+        // socket.on('assign_room_object', data => {
+        //     localStorage.roomObj = JSON.stringify(data);
+        // })
+
         let roomList;
-        let playerRoom = JSON.parse(localStorage.getItem('roomObj'))
+        let playerRoom = JSON.parse(localStorage.getItem('playerObj'))
         let playerObj = JSON.parse(localStorage.playerObj);
         // let mainRoomObj = JSON.parse(localStorage.)
-        var socket = io(); //initialises the socket.io object
+
         //gets the requested room data
-
-
         // updates the roomobj on localstorage
-        socket.on("update_local", data => {
-            localStorage.roomObj = JSON.stringify(data);
-            if (!data.playerOneConnected || !data.playerTwoConnected) {
-                $("#spinner-container").css('display', 'block');
-                $("#spinner-container2").css('display', 'block');
-            } else {
-                $("#spinner-container").css('display', 'none');
-                $("#spinner-container2").css('display', 'none');
-            }
-        })
+        // socket.on("update_local", data => {
+        //     localStorage.roomObj = JSON.stringify(data);
+        //     if (!data.playerOneConnected || !data.playerTwoConnected) {
+        //         $("#spinner-container").css('display', 'block');
+        //         $("#spinner-container2").css('display', 'block');
+        //     } else {
+        //         $("#spinner-container").css('display', 'none');
+        //         $("#spinner-container2").css('display', 'none');
+        //     }
+        // })
 
         let rollResult, selectedCount, selectedRoll, selectedPiece, roomData; //global variables for DOM element
         // displayOutsidePiece();
-
-
-
-
         $(document).ready(function () {
             // seedDisplay(objectRetriever());
             socket.emit("first_room_data", playerRoom.id);
@@ -390,6 +389,8 @@
             location.assign('index.html') //sends the user that left to home page
         })
 
+
+
         //enables the user that rolls a dice to be able to select the roll result
         socket.on("enable_roll_select", function () {
             let rolls = [...document.getElementsByClassName("rolls")];
@@ -407,20 +408,9 @@
         }
 
         //request the server to add the user to room
-        socket.emit('game', playerRoom)
-
-        //indicates a user join
+        socket.emit('game', playerObj);
         socket.on("user", function (data) {
-            if (playerObj.player == "one") {
-                playerRoom.playerOneConnected = true;
-            } else if (playerObj.player == "two") {
-                playerRoom.playerTwoConnected = true;
-            }
-            console.log(` ${data.playerName} Joined ${data.name} room`)
-            if (data.playerOneConnected && data.playerTwoConnected) { //checks if the second user has
-                $("#spinner-container").css('display', 'none'); //stops the spinner
-            }
-            socket.emit('update_local_roomObj', playerRoom);
+            socket.emit('socket_connected', data);
         })
 
         //stops the spinner for the second user
@@ -457,7 +447,6 @@
         })
         //emits the counting to the room
         socket.on("counting", function () {
-
             countPiece();
         })
 
@@ -493,44 +482,46 @@
 
         //handles connection
         socket.on('user_is_connected', function () {
-            if (playerObj.player == "one") {
-                playerRoom.playerOneConnected = true;
-            } else if (playerObj.player == "two") {
-                playerRoom.playerTwoConnected = true;
-            }
-            socket.emit('update_local_roomObj', playerRoom);
+            // if (playerObj.player == "one") {
+            //     playerRoom.playerOneConnected = true;
+            // } else if (playerObj.player == "two") {
+            //     playerRoom.playerTwoConnected = true;
+            // }
+            $("#spinner-container").css('display', 'none');
+            $("#spinner-container2").css('display', 'none');
+            // socket.emit('update_local_roomObj', playerRoom);
             // if (!playerRoom.userDisconnect) {
             //     socket.emit('all_user_connected', playerRoom)
             //     console.log('all user connected')
             // }
             // if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
-            socket.emit('all_user_connected', playerRoom)
+            // socket.emit('all_user_connected', playerRoom)
             // console.log('all user connected')
             // // }
             // console.log('player connected');
         })
 
         socket.on('connect', () => {
-            if (playerObj.player == "one") {
-                playerRoom.playerOneConnected = true;
-            } else if (playerObj.player == "two") {
-                playerRoom.playerTwoConnected = true;
-            }
-            socket.emit('update_local_roomObj', playerRoom);
+            // if (playerObj.player == "one") {
+            //     playerRoom.playerOneConnected = true;
+            // } else if (playerObj.player == "two") {
+            //     playerRoom.playerTwoConnected = true;
+            // }
+            // socket.emit('update_local_roomObj', playerRoom);
             socket.emit('socket_connected', playerRoom)
             // console.log('player connectedss');
             // console.log(socket.connected); // true
         });
 
         socket.on("disconnect", () => {
-            if (playerRoom.player == "one") {
-                playerRoom.playerOneConnected = false;
-            } else if (playerRoom.player == "two") {
-                playerRoom.playerTwoConnected = false;
-            }
+            // if (playerRoom.player == "one") {
+            //     playerRoom.playerOneConnected = false;
+            // } else if (playerRoom.player == "two") {
+            //     playerRoom.playerTwoConnected = false;
+            // }
             $("#spinner-container2").css('display', 'block');
             console.log('user disconnected')
-            socket.emit('update_local_roomObj', playerRoom);
+            // socket.emit('update_local_roomObj', playerRoom);
             socket.open();
             // socket.socket.reconnect();
         });
