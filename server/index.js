@@ -32,8 +32,19 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 let socketRoom;
-io.on("connection", (socket) => {
-  var connection = mysql.createConnection({
+var connection = mysql.createConnection({
+  // host: "localhost",
+  // user: "Tokyo",
+  // password: "1234",
+  // database: "ludo_db",
+  // connectTimeout: 50000,
+  host: "us-cdbr-east-06.cleardb.net",
+  user: "bbd595c0cfc9d8",
+  password: "471a0423",
+  database: "heroku_0ac0f4b1f9afa39",
+});
+connection.on("error", function () {
+  connection = mysql.createConnection({
     // host: "localhost",
     // user: "Tokyo",
     // password: "1234",
@@ -44,19 +55,8 @@ io.on("connection", (socket) => {
     password: "471a0423",
     database: "heroku_0ac0f4b1f9afa39",
   });
-  connection.on("error", function () {
-    connection = mysql.createConnection({
-      // host: "localhost",
-      // user: "Tokyo",
-      // password: "1234",
-      // database: "ludo_db",
-      // connectTimeout: 50000,
-      host: "us-cdbr-east-06.cleardb.net",
-      user: "bbd595c0cfc9d8",
-      password: "471a0423",
-      database: "heroku_0ac0f4b1f9afa39",
-    });
-  });
+});
+io.on("connection", (socket) => {
   // const pool = mysql.createPool({
   //   host: "us-cdbr-east-06.cleardb.net",
   //   user: "bbd595c0cfc9d8",
@@ -79,7 +79,6 @@ io.on("connection", (socket) => {
         // throw "Error Connecting to database";
         return;
       }
-
       console.log("connected as id " + connection.threadId);
     });
   } catch (error) {
