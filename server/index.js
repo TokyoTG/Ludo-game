@@ -31,45 +31,45 @@ const PORT = process.env.PORT || 5000;
 
 //main game
 let roomList = [];
-
+var connection = mysql.createConnection({
+  // host: "localhost",
+  // user: "Tokyo",
+  // password: "1234",
+  // database: "ludo_db",
+  // connectTimeout: 50000,
+  host: "us-cdbr-east-06.cleardb.net",
+  user: "bbd595c0cfc9d8",
+  password: "471a0423",
+  database: "heroku_0ac0f4b1f9afa39",
+});
+connection.on("error", function () {
+  connection = mysql.createConnection({
+    // host: "localhost",
+    // user: "Tokyo",
+    // password: "1234",
+    // database: "ludo_db",
+    // connectTimeout: 50000,
+    host: "us-cdbr-east-06.cleardb.net",
+    user: "bbd595c0cfc9d8",
+    password: "471a0423",
+    database: "heroku_0ac0f4b1f9afa39",
+  });
+});
 io.on("connection", (socket) => {
   let socketRoom;
-  var connection = mysql.createConnection({
-    host: "localhost",
-    user: "Tokyo",
-    password: "1234",
-    database: "ludo_db",
-    connectTimeout: 50000,
-    // host: "us-cdbr-east-06.cleardb.net",
-    // user: "bbd595c0cfc9d8",
-    // password: "471a0423",
-    // database: "heroku_0ac0f4b1f9afa39",
-  });
-  connection.on("error", function () {
-    connection = mysql.createConnection({
-      host: "localhost",
-      user: "Tokyo",
-      password: "1234",
-      database: "ludo_db",
-      connectTimeout: 50000,
-      // host: "us-cdbr-east-06.cleardb.net",
-      // user: "bbd595c0cfc9d8",
-      // password: "471a0423",
-      // database: "heroku_0ac0f4b1f9afa39",
-    });
-  });
-  try {
-    connection.connect(function (err) {
-      if (err) {
-        console.error("error connecting: " + err.stack);
-        // throw "Error Connecting to database";
-        return;
-      }
-      console.log("connected as id " + connection.threadId);
-    });
-  } catch (error) {
-    console.log(error);
-  }
+
+  // try {
+  //   connection.connect(function (err) {
+  //     if (err) {
+  //       console.error("error connecting: " + err.stack);
+  //       // throw "Error Connecting to database";
+  //       return;
+  //     }
+  //     console.log("connected as id " + connection.threadId);
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   let query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
   try {
