@@ -31,47 +31,33 @@ const PORT = process.env.PORT || 5000;
 
 //main game
 let roomList = [];
-let socketRoom;
-var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "Tokyo",
-  // password: "1234",
-  // database: "ludo_db",
-  // connectTimeout: 50000,
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "bbd595c0cfc9d8",
-  password: "471a0423",
-  database: "heroku_0ac0f4b1f9afa39",
-});
-connection.on("error", function () {
-  connection = mysql.createConnection({
-    // host: "localhost",
-    // user: "Tokyo",
-    // password: "1234",
-    // database: "ludo_db",
-    // connectTimeout: 50000,
-    host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
-    database: "heroku_0ac0f4b1f9afa39",
-  });
-});
-io.on("connection", (socket) => {
-  // const pool = mysql.createPool({
-  //   host: "us-cdbr-east-06.cleardb.net",
-  //   user: "bbd595c0cfc9d8",
-  //   password: "471a0423",
-  //   database: "heroku_0ac0f4b1f9afa39",
-  //   // host: "localhost",
-  //   // user: "Tokyo",
-  //   // password: "1234",
-  //   // database: "ludo_db",
-  // });
 
-  // // ... later
-  // pool.query("select 1 + 1", (err, rows) => {
-  //   /* */
-  // });
+io.on("connection", (socket) => {
+  let socketRoom;
+  var connection = mysql.createConnection({
+    host: "localhost",
+    user: "Tokyo",
+    password: "1234",
+    database: "ludo_db",
+    connectTimeout: 50000,
+    // host: "us-cdbr-east-06.cleardb.net",
+    // user: "bbd595c0cfc9d8",
+    // password: "471a0423",
+    // database: "heroku_0ac0f4b1f9afa39",
+  });
+  connection.on("error", function () {
+    connection = mysql.createConnection({
+      host: "localhost",
+      user: "Tokyo",
+      password: "1234",
+      database: "ludo_db",
+      connectTimeout: 50000,
+      // host: "us-cdbr-east-06.cleardb.net",
+      // user: "bbd595c0cfc9d8",
+      // password: "471a0423",
+      // database: "heroku_0ac0f4b1f9afa39",
+    });
+  });
   try {
     connection.connect(function (err) {
       if (err) {
@@ -332,7 +318,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("you_are_nexts", (data) => {
-    socket.emit("your_turn", "roll");
+    // socket.emit("your_turn", "roll");
+    socket.to(data.name).emit("your_turn", "let's play a game");
     // socket.to(data.name).emit("your_turn", "roll");
   });
 
