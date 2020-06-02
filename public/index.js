@@ -88,7 +88,7 @@ function modifyObject(house, player, pieceNmuber) {
   }
   // storePlayerObjects(...arr);
   updateObj.roomData = roomData;
-  console.log(roomData);
+  //console.log(roomData);
   socket.emit("update_room_data", updateObj);
   // socket.emit("get_room_data", playerRoom.id);
   seedDisplay(arrr);
@@ -180,7 +180,7 @@ function increasePieceCount(num, code) {
     id: playerRoom.id,
     count: JSON.stringify(currentCollatedCounts),
   };
-  console.log(countObj.count);
+  // console.log(countObj.count);
   socket.emit("store_piece_array", countObj);
   displayOntheMove(collateCount(seedDetails.house));
   displayOntheMove(collateCount(seedDetails.house));
@@ -778,6 +778,7 @@ function rollAgain(num1, num2) {
 }
 
 function forfietCount() {
+  playerRoom.rolled = false;
   socket.emit("reset_roll_results", playerRoom);
   // console.log("forfiet");
 }

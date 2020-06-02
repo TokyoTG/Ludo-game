@@ -434,7 +434,8 @@
         })
 
         socket.on("send_turn", function () {
-            socket.emit("you_are_nexts", playerRoom);
+            is_your_turn();
+            // socket.emit("you_are_nexts", playerRoom);
         })
         //emits the counting to the room
         socket.on("counting", function () {
@@ -448,11 +449,11 @@
 
         //emits piece selection
         socket.on("select_the_piece", function (data) {
-            console.log(data)
+            //console.log(data)
             selectedPiece = $(`#${data[1]}`); //selects the piece using the classnames sent from server
-            console.log(selectedPiece.attr("class"));
+            //console.log(selectedPiece.attr("class"));
             let house = getPieceHouse(selectedPiece)
-            console.log(house)
+            //console.log(house)
             if (checkPlayer(house, playerObj.player)) {
                 // select()
                 socket.emit('selection_made', data);
@@ -463,9 +464,9 @@
             // console.log(playerRoom.player);
         })
         socket.on("emit_select", function (data) {
-            console.log(data);
+            //console.log(data);
             selectedPiece = $(`#${data[1]}`);
-            console.log(selectedPiece);
+            //console.log(selectedPiece);
             select();
         })
         //emits roll result selection 
@@ -477,23 +478,8 @@
 
         //handles connection
         socket.on('user_is_connected', function () {
-            // if (playerObj.player == "one") {
-            //     playerRoom.playerOneConnected = true;
-            // } else if (playerObj.player == "two") {
-            //     playerRoom.playerTwoConnected = true;
-            // }
             $("#spinner-container").css('display', 'none');
             $("#spinner-container2").css('display', 'none');
-            // socket.emit('update_local_roomObj', playerRoom);
-            // if (!playerRoom.userDisconnect) {
-            //     socket.emit('all_user_connected', playerRoom)
-            //     console.log('all user connected')
-            // }
-            // if (playerRoom.playerOneConnected && playerRoom.playerTwoConnected) {
-            // socket.emit('all_user_connected', playerRoom)
-            // console.log('all user connected')
-            // // }
-            // console.log('player connected');
         })
 
         socket.on('connect', () => {
