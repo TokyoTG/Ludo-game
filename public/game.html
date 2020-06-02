@@ -448,10 +448,11 @@
 
         //emits piece selection
         socket.on("select_the_piece", function (data) {
+            console.log(data)
             selectedPiece = $(`#${data[1]}`); //selects the piece using the classnames sent from server
+            console.log(selectedPiece.attr("class"));
             let house = getPieceHouse(selectedPiece)
-
-            // console.log(house)
+            console.log(house)
             if (checkPlayer(house, playerObj.player)) {
                 // select()
                 socket.emit('selection_made', data);
@@ -462,9 +463,10 @@
             // console.log(playerRoom.player);
         })
         socket.on("emit_select", function (data) {
+            console.log(data);
             selectedPiece = $(`#${data[1]}`);
-            // console.log(selectedPiece);
-            select()
+            console.log(selectedPiece);
+            select();
         })
         //emits roll result selection 
         socket.on("select_the_roll", function (data) {

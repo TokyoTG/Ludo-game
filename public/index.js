@@ -110,7 +110,7 @@ function seedDisplay(obj) {
       $(`#${item.house}`).html("");
       for (let piece of item.pieceNmuber) {
         $(`#${item.house}`).append(
-          `<div class="square ${piece} ${item.house}" onclick="emitSelect(this)"></div>`
+          `<div class="square ${piece} ${item.house}" id="square-${piece}-${item.house}" onclick="emitSelect(this)"></div>`
         );
       }
     }
@@ -329,6 +329,7 @@ function cellSanitizer() {
     data.dataset.player = "";
     data.dataset.occupier = "";
     data.setAttribute("onclick", "");
+    data.setAttribute("id", "");
   });
 }
 
@@ -438,7 +439,8 @@ function goHouse(element) {
     $(res[0]).addClass(element.house);
     res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
     res[0].dataset.occupiedHouse = element.house;
-    res[0].setAttribute("onclick", "select()");
+    res[0].setAttribute("id", element.pieceNmuber + "-" + element.house);
+    res[0].setAttribute("onclick", "emitSelect(this)");
   }
 }
 
@@ -456,7 +458,7 @@ function prepareDropdown(obj, element, indexCount) {
   var text = ``;
   for (let key in obj) {
     if (obj[key].index == indexCount && obj[key].player == element.player) {
-      text += `<a class="${obj[key].house} ${key} celldrop"  onclick="select()"></a>`;
+      text += `<a class="${obj[key].house} ${key} celldrop" id="${obj[key].house}-${key}"  onclick="select()"></a>`;
     }
     if (obj[key].player == element.player) {
       // console.log(dropdownArray[key])
@@ -549,6 +551,9 @@ function storeOutsidePiece(element) {
 
 function getPieceHouse(element) {
   arr = element.attr("class").split(" ");
+  if (arr.includes("houses")) {
+    return arr[3];
+  }
   if (arr.includes("celldrop")) {
     return arr[0];
   }
@@ -742,6 +747,10 @@ function emitSelect(obj) {
   selectedPiece = [...event.target.classList].join(".");
   let selectedId = event.target.id;
   // console.log(selectedId);
+  // if (selectedId == "") {
+  //   selectedId = [...event.target.classList].join("-");
+  //   event.target.setAttribute("id", selectedId);
+  // }
   socket.emit("piece_selected", getSelectedPiece(selectedPiece, selectedId));
   // console.log(obj);
   // console.log(selectedPiece);
