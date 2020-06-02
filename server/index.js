@@ -318,14 +318,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("you_are_nexts", (data) => {
-    // socket.emit("your_turn", "roll");
-    socket.to(data.name).emit("your_turn", "let's play a game");
-    // socket.to(data.name).emit("your_turn", "roll");
+    socket.emit("your_turn", "roll");
   });
 
   socket.on("reset_roll_results", (data) => {
     socket.to(data.name).emit("send_turn", "the other user can roll");
     io.to(data.name).emit("reset_rolls", "reset all roll results");
+  });
+
+  socket.on("done_counting", (data) => {
+    socket.to(data.name).emit("send_turn", "the other user can roll");
   });
 
   socket.on("ok_disable_rolls", (data) => {
@@ -338,14 +340,14 @@ io.on("connection", (socket) => {
     // io.to(data[1].name).emit("select_the_piece", data); //shows what a user selects
   });
   socket.on("roll_selected", (data) => {
-    io.to(data[1].name).emit("select_the_roll", data); //shows the roll result a user selected
+    io.to(data[2].name).emit("select_the_roll", data); //shows the roll result a user selected
   });
   socket.on("disable_selected_roll", (data) => {
     socket.emit("you_can_disable", data); //disables a roll result after counting the roll
   });
 
   socket.on("selection_made", (data) => {
-    io.to(data[1].name).emit("emit_select", data);
+    io.to(data[2].name).emit("emit_select", data);
   });
 
   //handles spinner removal
@@ -359,6 +361,15 @@ io.on("connection", (socket) => {
     io.to(socketRoom).emit("connection_lost", "try refreshing");
     // socket.rooms;
     // console.log(socketRoom);
+  });
+  socket.on("reconnecting", () => {
+    // ...
+    io.to(socketRoom).emit("connection_lost", "try refreshing");
+  });
+  socket.on("reconnect_attempt", () => {
+    // ...
+    console.log("reconnect");
+    io.to(socketRoom).emit("connection_lost", "try refreshing");
   });
 });
 

@@ -264,6 +264,7 @@
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('playerObj'))
         let playerObj = JSON.parse(localStorage.playerObj);
+        playerRoom.rolled = false;
         // let mainRoomObj = JSON.parse(localStorage.)
 
         let rollResult, selectedCount, selectedRoll, selectedPiece, roomData; //global variables for DOM element
@@ -322,7 +323,7 @@
         //recieves the room array from server
         socket.on('rooms', function (data) {
             roomList = data //assigns the room array to a global variable
-            console.log(data);
+            //console.log(data);
         })
 
         $(".close").click(function () {
@@ -361,7 +362,7 @@
             is_your_turn();
         })
 
-        console.log(playerRoom);
+        //console.log(playerRoom);
 
         //removes the user from a rooom 
         $("#quit").click(function () {
@@ -388,6 +389,7 @@
 
         //initializes dice rolling
         function rollsDice() {
+            playerRoom.rolled = true;
             socket.emit('rolldice', playerRoom);
         }
 
@@ -403,15 +405,20 @@
 
         })
 
+
+
         //disables the selected roll after counting
         socket.on("you_can_disable", function (data) {
-            // console.log('hi');
             let rollresults1 = $(".rolls.one");
             let rollresults2 = $(".rolls.two");
             selectedRoll.attr("onclick", "");
             if (rollresults1.text() == "0" && rollresults2.text() == "0") {
-                console.log('done counting');
-                socket.emit("you_are_nexts", playerRoom);
+                //console.log('done counting');
+                // socket.emit("you_are_nexts", playerRoom);
+                if (playerRoom.rolled) {
+                    socket.emit('done_counting', playerRoom);
+                    playerRoom.rolled = false;
+                }
             }
         })
 
@@ -441,19 +448,21 @@
 
         //emits piece selection
         socket.on("select_the_piece", function (data) {
-            selectedPiece = $(`.${data[0]}`); //selects the piece using the classnames sent from server
+            selectedPiece = $(`#${data[1]}`); //selects the piece using the classnames sent from server
             let house = getPieceHouse(selectedPiece)
+
             // console.log(house)
             if (checkPlayer(house, playerObj.player)) {
                 // select()
                 socket.emit('selection_made', data);
+                // console.log(data);
             } else {
                 alert('You can not select, Its not ur house')
             }
             // console.log(playerRoom.player);
         })
         socket.on("emit_select", function (data) {
-            selectedPiece = $(`.${data[0]}`);
+            selectedPiece = $(`#${data[1]}`);
             // console.log(selectedPiece);
             select()
         })
@@ -502,14 +511,14 @@
         });
         socket.on('reconnect_attempt', () => {
             // ...
-            console.log('reconnect')
+            //console.log('reconnect')
             socket.emit("a_user_disconnected", playerRoom);
         });
 
         socket.on("disconnect", () => {
             $("#spinner-container").css('display', 'block');
             $("#spinner-container2").css('display', 'block');
-            console.log('user disconnected')
+            //console.log('user disconnected')
             socket.emit('a_user_left', playerRoom);
             // socket.emit('update_local_roomObj', playerRoom);
             socket.open();

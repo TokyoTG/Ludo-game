@@ -125,7 +125,6 @@ function select() {
   let res;
   // add selected class to the clicked square
   $(selectedPiece).addClass("selected");
-
   arr = selectedPiece.attr("class").split(" ");
   if (arr.includes("shadow")) {
     // res = selectedPiece.dataset.occupier;
@@ -277,7 +276,7 @@ function getClassList(element) {
       //adds the appropriate class to piece
       $(res[0]).addClass(element.house, "shadow");
       $(res[0]).addClass("shadow");
-
+      res[0].setAttribute("id", element.pieceNmuber + "-" + element.house);
       res[0].setAttribute("onclick", "emitSelect(this)");
       res[0].dataset.occupier = element.pieceNmuber + "-" + element.house;
       res[0].dataset.player = element.player;
@@ -510,6 +509,7 @@ function getHouseCode(element) {
 function clearAllSelected() {
   // $("*").removeClass("selected");
   let squares = Array.from($(".square"));
+  let shadows = Array.from($(".shadow"));
   let cells = Array.from($(".cells"));
   let dropCells = Array.from($(".celldrop"));
   for (let square of squares) {
@@ -532,6 +532,13 @@ function clearAllSelected() {
     if ($(cells).hasClass("selected")) {
       $(cells).unbind();
       $(cells).removeClass("selected");
+    }
+  }
+  for (let shadow of shadows) {
+    //removes selected class from dropdoown items with selected class
+    if ($(shadow).hasClass("selected")) {
+      $(shadow).unbind();
+      $(shadow).removeClass("selected");
     }
   }
 }
@@ -733,7 +740,9 @@ function emitCount() {
 
 function emitSelect(obj) {
   selectedPiece = [...event.target.classList].join(".");
-  socket.emit("piece_selected", getSelectedPiece(selectedPiece));
+  let selectedId = event.target.id;
+  // console.log(selectedId);
+  socket.emit("piece_selected", getSelectedPiece(selectedPiece, selectedId));
   // console.log(obj);
   // console.log(selectedPiece);
 }
@@ -742,8 +751,8 @@ function emitSelect(obj) {
 //   countBtn.setAttribute("onclick", "");
 // }
 
-function getSelectedPiece(obj) {
-  return [obj, playerRoom];
+function getSelectedPiece(obj1, obj2 = {}) {
+  return [obj1, obj2, playerRoom];
 }
 
 function emitSelectedRoll() {
