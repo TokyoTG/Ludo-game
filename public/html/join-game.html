@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#1de9b6">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+<style>
+    li {
+        padding: 10px;
+        cursor: pointer;
+        border: 1px solid;
+        border-collapse: collapse;
+    }
+
+    /* #create,
+  #join {
+    display: none;
+  } */
+</style>
+
+<body>
+    <div>
+        <h2>Welcome Please Enter Room ID to Join Game Room</h2>
+        <form id="join">
+            <h4>Join Room</h4>
+            <p>All fields are required</p>
+            <p>
+                <label for="player-name">Player Name*</label>
+                <input type="text" name="player-name" id="player-name" required>
+            </p>
+            <label for="room-id">Room Id*</label>
+            <input type="text" name="room-id" id="room-id" required>
+            </p>
+            </p>
+            <label for="room-id">Join As*</label>
+            <select name="join" id="join">
+                <option value="" selected disabled>Choose One</option>
+                <option value="one">Player One</option>
+                <option value="two">Player Two</option>
+            </select>
+            </p>
+            <button>Submit</button>
+        </form>
+
+        <h4>Available Rooms</h4>
+        <ul id="roomList">
+
+        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Room Name</td>
+                    <td>Player One</td>
+                    <td>Player Two</td>
+                    <td>Connected</td>
+                </tr>
+            </thead>
+            <tbody id="roomTable">
+
+            </tbody>
+
+        </table>
+        <a href="dice.html">Dice</a> |
+        <a href="dice2.html">Dice2</a>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        // if (localStorage.getItem('roomObj')) {
+        //   location.replace('game.html')
+        // }
+
+        //should be removed when working on multiplayer
+
+        var socket = io();
+        let roomObj = {};
+
+        let rooms;
+        let dbrooms;
+
+        socket.on('all_rooms', data => {
+            console.log(data);
+            dbrooms = data
+            let tabletext = ''
+            let tableBody = $('#roomTable')
+            data.forEach(element => {
+                tabletext += `
+                <tr>
+                  <td>${element.room_ID}</td>
+                  <td>${element.name}</td>
+                  <td>${element.playerOne}</td>
+                  <td>${element.playerTwo}</td>
+                  <td>${element.connected}</td>
+                </tr>
+        `
+            });
+            tableBody.text('');
+            tableBody.append(tabletext);
+        })
+
+
+        $("#join").submit(function (e) {
+            e.preventDefault()
+            let playerName = $("#player-name").val().trim();
+            let roomId = $("#room-id").val().trim();
+            let selection = $("#join :selected").val().trim();
+            if (playerName == '' || roomId == '' || selection == '') {
+                alert('You are Wrong');
+                return 1;
+            }
+            let joinObj = {
+                id: roomId,
+                playerName: playerName,
+            }
+            for (let item of dbrooms) {
+                if (item.room_ID == roomId) {
+                    joinObj.name = item.name;
+                    let playerObj = {
+                        playerName: playerName,
+                        id: roomId,
+                        name: item.name,
+                    };
+                    if (item.connected <= 2) {
+                        if (selection == 'one') {
+                            if (item.connected == 0) {
+                                playerObj.player = 'one';
+                                playerObj.playerName = item.playerOne
+                                socket.emit("increase_num_of_connected", playerObj);
+                                localStorage.playerObj = JSON.stringify(playerObj);
+                            } else {
+                                location.assign('index.html')
+                                return "No";
+                            }
+                        } else if (selection == 'two' && item.connected > 0) {
+                            playerObj.player = 'two';
+                            if (item.playerTwo != null) {
+                                playerObj.playerName = item.playerTwo
+                                socket.emit("increase_num_of_connected", playerObj);
+                            } else {
+                                playerObj.player = 'two';
+                                playerObj.playerName = playerName
+                                socket.emit("update_player_two", playerObj);
+                            }
+                            localStorage.playerObj = JSON.stringify(playerObj);
+                        } else {
+                            return false;
+                        }
+                        location.assign('game.html');
+                    }
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>

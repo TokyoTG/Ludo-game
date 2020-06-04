@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#1de9b6">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+<style>
+    li {
+        padding: 10px;
+        cursor: pointer;
+        border: 1px solid;
+        border-collapse: collapse;
+    }
+
+    /* #create,
+  #join {
+    display: none;
+  } */
+</style>
+
+<body>
+    <div>
+        <h2>Welcome Please Create Game Room</h2>
+        <form id="create">
+            <h4>Create Room</h4>
+            <p>All fields are required</p>
+            <p>
+                <label for="creator-name">Player Name*</label><br>
+                <input type="text" name="creator-name" id="creator-name" required>
+            </p>
+            <p>
+                <label for="room-name">Room Name*</label><br>
+                <input type="text" name="room-name" id="room-name" required>
+            </p>
+            <button>Submit</button>
+        </form>
+        <p>
+            <a href="join-game.html">Join room</a>
+        </p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        // if (localStorage.getItem('roomObj')) {
+        //   location.replace('game.html')
+        // }
+
+        //should be removed when working on multiplayer
+
+        var socket = io();
+        let roomObj = {};
+
+
+        //creates a new room
+        $("#create").submit(function (e) {
+            e.preventDefault()
+            let playerName = $("#creator-name").val();
+            let roomName = $("#room-name").val();
+            roomObj.connectedPlayers = [];
+            roomObj.connectedPlayers.push(playerName);
+            roomObj = {
+                name: roomName,
+                creator: playerName,
+                id: generateRoomId(),
+                playerName: playerName,
+                player: 'one',
+            }
+            let playerObj = {
+                playerName: playerName,
+                id: generateRoomId(),
+                name: roomName,
+                player: 'one',
+            }
+            localStorage.clear();
+            // localStorage.playerObj = JSON.stringify(playerObj);
+            localStorage.setItem('playerObj', JSON.stringify(roomObj))
+            socket.emit('create_room', roomObj);
+            // localStorage.player1 = JSON.stringify(roomObj);
+            location.assign('game.html');
+        })
+
+        function generateRoomId() {
+            let roomId = "";
+            let index;
+            let alphabets = [9, 'a', 'A', 2, 'c', 'C', 3, 'D', 4, 'E', 5, 'F', 6, 'G', 7, 'I', 8, 'm', "M",
+                '1', 'z', 'w', 0
+            ];
+
+            for (let i = 0; i < 10; i++) {
+                index = Math.floor(Math.random() * alphabets.length - 1) + 1;
+                roomId
+                    += alphabets[index];
+            }
+            return roomId;
+        }
+    </script>
+</body>
+
+</html>

@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1de9b6">
-    <link rel="stylesheet" href="./css/all.min.css">
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/dice2.css">
-    <link rel="stylesheet" href="./css/spinner.css">
+    <link rel="stylesheet" href="../css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dice2.css">
+    <link rel="stylesheet" href="../css/spinner.css">
     <title>Document</title>
 </head>
 
@@ -253,8 +253,8 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="./index.js"></script>
-    <script src="sql.js"></script>
+    <script src="../js/index.js"></script>
+    <script src="../js/sql.js"></script>
     <script>
         if (localStorage.getItem('playerObj') == '') {
             location.replace('index.html') //redirects when the user is not in any room
@@ -383,7 +383,7 @@
             localStorage.clear()
             // socket.emit('updateRoom', playerRoom); //request the room info be changed
             socket.emit('a_user_left', playerRoom); //notifies the server a user left
-            location.assign('index.html') //sends the user that left to home page
+            location.assign('../index.html') //sends the user that left to home page
         })
 
 
