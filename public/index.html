@@ -8,84 +8,17 @@
   <title>Document</title>
 </head>
 <style>
-  li {
-    padding: 10px;
-    cursor: pointer;
-    border: 1px solid;
-    border-collapse: collapse;
-  }
-
-  /* #create,
-  #join {
-    display: none;
-  } */
 </style>
 
 <body>
+  <h1>Welcome to ludomania</h1>
+  <p>An online multi-player ludo game that gives you the opportunity to thrash your distant loved ones</p>
   <nav>
     <ul>
       <li><a href="./html/create-game.html">Create Game</a></li>
       <li><a href="./html/join-game.html">Join Game</a></li>
     </ul>
   </nav>
-  <div>
-    <h2>Welcome Please Create or Join Game Room</h2>
-    <form id="create">
-      <h4>Create Room</h4>
-      <p>All fields are required</p>
-      <p>
-        <label for="creator-name">Player Name*</label><br>
-        <input type="text" name="creator-name" id="creator-name" required>
-      </p>
-      <p>
-        <label for="room-name">Room Name*</label><br>
-        <input type="text" name="room-name" id="room-name" required>
-      </p>
-      <button>Submit</button>
-    </form>
-    <form id="join">
-      <h4>Join Room</h4>
-      <p>All fields are required</p>
-      <p>
-        <label for="player-name">Player Name*</label>
-        <input type="text" name="player-name" id="player-name" required>
-      </p>
-      <label for="room-id">Room Id*</label>
-      <input type="text" name="room-id" id="room-id" required>
-      </p>
-      </p>
-      <label for="room-id">Join As*</label>
-      <select name="join" id="join">
-        <option value="" selected disabled>Choose One</option>
-        <option value="one">Player One</option>
-        <option value="two">Player Two</option>
-      </select>
-      </p>
-      <button>Submit</button>
-    </form>
-
-    <h4>Available Rooms</h4>
-    <ul id="roomList">
-
-    </ul>
-    <table>
-      <thead>
-        <tr>
-          <td>Id</td>
-          <td>Room Name</td>
-          <td>Player One</td>
-          <td>Player Two</td>
-          <td>Connected</td>
-        </tr>
-      </thead>
-      <tbody id="roomTable">
-
-      </tbody>
-
-    </table>
-    <a href="dice.html">Dice</a> |
-    <a href="dice2.html">Dice2</a>
-  </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="./js/index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

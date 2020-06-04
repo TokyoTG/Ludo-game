@@ -32,27 +32,27 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "Tokyo",
-  // password: "1234",
-  // database: "ludo_db",
-  // connectTimeout: 50000,
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "bbd595c0cfc9d8",
-  password: "471a0423",
-  database: "heroku_0ac0f4b1f9afa39",
+  host: "localhost",
+  user: "Tokyo",
+  password: "1234",
+  database: "ludo_db",
+  connectTimeout: 50000,
+  // host: "us-cdbr-east-06.cleardb.net",
+  // user: "bbd595c0cfc9d8",
+  // password: "471a0423",
+  // database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    // host: "localhost",
-    // user: "Tokyo",
-    // password: "1234",
-    // database: "ludo_db",
-    // connectTimeout: 50000,
-    host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
-    database: "heroku_0ac0f4b1f9afa39",
+    host: "localhost",
+    user: "Tokyo",
+    password: "1234",
+    database: "ludo_db",
+    connectTimeout: 50000,
+    // host: "us-cdbr-east-06.cleardb.net",
+    // user: "bbd595c0cfc9d8",
+    // password: "471a0423",
+    // database: "heroku_0ac0f4b1f9afa39",
   });
 });
 io.on("connection", (socket) => {
@@ -139,6 +139,22 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("check_room_name", (data) => {
+    let query = `SELECT * from rooms WHERE name='${data.name}'`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result) {
+        if (result.length) {
+          socket.emit("room_exists", data.name);
+        } else {
+          socket.emit("you_can_create_room", "yeah go ahead");
+        }
+      }
+    });
+  });
   io.emit("all_rooms", dbrooms);
   // socket.on("connect", () => {
   //   io.emit("user_is_connected", "play on");

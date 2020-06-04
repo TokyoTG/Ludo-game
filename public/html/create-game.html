@@ -8,17 +8,6 @@
     <title>Document</title>
 </head>
 <style>
-    li {
-        padding: 10px;
-        cursor: pointer;
-        border: 1px solid;
-        border-collapse: collapse;
-    }
-
-    /* #create,
-  #join {
-    display: none;
-  } */
 </style>
 
 <body>
@@ -53,8 +42,6 @@
 
         var socket = io();
         let roomObj = {};
-
-
         //creates a new room
         $("#create").submit(function (e) {
             e.preventDefault()
@@ -76,11 +63,15 @@
                 player: 'one',
             }
             localStorage.clear();
-            // localStorage.playerObj = JSON.stringify(playerObj);
             localStorage.setItem('playerObj', JSON.stringify(roomObj))
+            socket.emit("check_room_name", roomObj);
+        })
+        socket.on("you_can_create_room", () => {
             socket.emit('create_room', roomObj);
-            // localStorage.player1 = JSON.stringify(roomObj);
             location.assign('game.html');
+        })
+        socket.on("room_exists", data => {
+            alert(`The room name already exists`);
         })
 
         function generateRoomId() {
