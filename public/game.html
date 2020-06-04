@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1de9b6">
-    <link rel="stylesheet" href="all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dice2.css">
-    <link rel="stylesheet" href="spinner.css">
+    <link rel="stylesheet" href="./css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/dice2.css">
+    <link rel="stylesheet" href="./css/spinner.css">
     <title>Document</title>
 </head>
 
 <body>
     <div class="game">
         <div class="house green">
-
             <div class="box" id="green">
+
             </div>
         </div>
 
@@ -203,7 +203,7 @@
     <div>
         <button class="button" id="count" onclick="emitCount()">Count seed</button>
         <button class="button" id="reset-count" onclick="">forfiet Count</button>
-        <!-- <button class="button" id="reset">Reset Game</button> -->
+        <button class="button" id="reset">Reset Game</button>
         <!-- <button type="button" class="button" id="roll-button" onclick="rollsDice()">Roll Dice</button> -->
         <button class="button" id="quit">Exit Room</button>
         <p class="rolls one" onclick="emitSelectedRoll()">0</p>
@@ -260,7 +260,7 @@
             location.replace('index.html') //redirects when the user is not in any room
         }
         var socket = io(); //initialises the socket.io object
-
+        let player_names = ['playerone', 'playertwo'];
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('playerObj'))
         let playerObj = JSON.parse(localStorage.playerObj);
@@ -272,6 +272,17 @@
         $(document).ready(function () {
             // seedDisplay(objectRetriever());
             socket.emit("first_room_data", playerRoom.id);
+        })
+
+        socket.on("players_names", data => {
+            console.log(data);
+            player_names = data
+            let player1_name = [...document.getElementsByClassName("p1-name")];
+            let player2_name = [...document.getElementsByClassName("p2-name")];
+            for (let i = 0; i < player1_name.length; i++) {
+                player1_name[i].textContent = data[0];
+                player2_name[i].textContent = data[1];
+            }
         })
         socket.on('sent_room_data', data => {
             roomData = JSON.parse(data);
@@ -314,10 +325,11 @@
 
         $("#reset").click(function (e) {
             e.preventDefault();
-            let confirmation = window.confirm('Are You sure');
-            if (confirmation) {
-                resetAll()
-            }
+            socket.emit("resetting_game", playerRoom);
+        })
+
+        socket.on("games_counts_reset", () => {
+            socket.emit("first_room_data", playerRoom.id);
         })
 
         //recieves the room array from server
@@ -368,7 +380,7 @@
         $("#quit").click(function () {
             // socket.rooms.leave()
             playerRoom.numberOfPlayers -= 1
-            localStorage.setItem('roomObj', '');
+            localStorage.clear()
             // socket.emit('updateRoom', playerRoom); //request the room info be changed
             socket.emit('a_user_left', playerRoom); //notifies the server a user left
             location.assign('index.html') //sends the user that left to home page
@@ -483,31 +495,23 @@
         })
 
         socket.on('connect', () => {
-            // if (playerObj.player == "one") {
-            //     playerRoom.playerOneConnected = true;
-            // } else if (playerObj.player == "two") {
-            //     playerRoom.playerTwoConnected = true;
-            // }
-            // socket.emit('update_local_roomObj', playerRoom);
-            socket.emit('socket_connected', playerRoom)
-            // console.log('player connectedss');
-            // console.log(socket.connected); // true
+            socket.emit('socket_connected', playerRoom);
         });
-        socket.on('reconnecting', () => {
-            // ...
-            socket.emit("a_user_disconnected", playerRoom);
-        });
-        socket.on('reconnect_attempt', () => {
-            // ...
-            //console.log('reconnect')
-            socket.emit("a_user_disconnected", playerRoom);
-        });
+        // socket.on('reconnecting', () => {
+        //     // ...
+        //     socket.emit("a_user_disconnected", playerRoom);
+        // });
+        // socket.on('reconnect_attempt', () => {
+        //     // ...
+        //     //console.log('reconnect')
+        //     socket.emit("a_user_disconnected", playerRoom);
+        // });
 
         socket.on("disconnect", () => {
-            $("#spinner-container").css('display', 'block');
+            // $("#spinner-container").css('display', 'block');
             $("#spinner-container2").css('display', 'block');
             //console.log('user disconnected')
-            socket.emit('a_user_left', playerRoom);
+            // socket.emit('a_user_left', playerRoom);
             // socket.emit('update_local_roomObj', playerRoom);
             socket.open();
             // socket.socket.reconnect();
@@ -517,9 +521,12 @@
             $("#spinner-container2").css('display', 'none');
         })
         socket.on("user_disconnects", function () {
-
             $("#spinner-container2").css('display', 'block');
-        })
+        });
+
+        socket.on('connection_lost', () => {
+            $("#spinner-container").css('display', 'block');
+        });
     </script>
 </body>
 

@@ -198,7 +198,7 @@
                 location.assign('index.html')
                 return "No";
               }
-            } else if (selection == 'two') {
+            } else if (selection == 'two' && item.connected > 0) {
               playerObj.player = 'two';
               if (item.playerTwo != null) {
                 playerObj.playerName = item.playerTwo
@@ -209,32 +209,11 @@
                 socket.emit("update_player_two", playerObj);
               }
               localStorage.playerObj = JSON.stringify(playerObj);
+            } else {
+              return false;
             }
             location.assign('./game.html');
           }
-          // if (localStorage.roomObj != null && localStorage.roomObj != '') {
-          //   roomObj = JSON.parse(localStorage.roomObj);
-          //   roomObj.playerTwoConnected = true;
-          //   roomObj.userJoined = true;
-          //   roomObj.connectedPlayers.push(playerName);
-          //   localStorage.roomObj = JSON.stringify(roomObj);
-          //   socket.emit('update_local_roomObj', roomObj);
-          // } else {
-          //   roomObj = {
-          //     name: item.name,
-          //     id: roomId,
-          //     userDisconnect: false,
-          //     connectedPlayers: [],
-          //     playerOneConnected: true,
-          //     playerTwoConnected: false,
-          //     userJoined: false
-          //   }
-          //   roomObj.connectedPlayers = [];
-          //   roomObj.connectedPlayers.push(playerName);
-          //   localStorage.roomObj = JSON.stringify(roomObj);
-          // socket.emit("get_room_data", roomId);
-          // localStorage.setItem('roomObj', JSON.stringify(joinObj))
-          // location.assign('./game.html')
         }
       }
 

@@ -104,10 +104,18 @@ function objectRetriever() {
 }
 
 function seedDisplay(obj) {
+  let playerNameDisplay = "";
   //loop through the passed array of player objects
   for (let element of obj) {
     for (let item of element.pieceDetails) {
       $(`#${item.house}`).html("");
+      if (item.house == "green" || item.house == "yellow") {
+        playerNameDisplay = `<p class="p1-name">${player_names[0]}</p>`;
+      }
+      if (item.house == "blue" || item.house == "red") {
+        playerNameDisplay = `<p class="p2-name">${player_names[1]}</p>`;
+      }
+      $(`#${item.house}`).append(playerNameDisplay);
       for (let piece of item.pieceNmuber) {
         $(`#${item.house}`).append(
           `<div class="square ${piece} ${item.house}" id="square-${piece}-${item.house}" onclick="emitSelect(this)"></div>`
@@ -665,6 +673,10 @@ function addToOutside(element) {
   socket.emit("update_room_data", updateObj);
   storePlayerObjects(...arrr);
   displayDbOutsidePiece(arrr);
+  let gameover = checkGameOver(arrr);
+  if (gameover) {
+    socket.emit("a_user_won");
+  }
   // displayOutsidePiece();
 }
 
@@ -796,4 +808,29 @@ function displayPlayerTurn() {
   setTimeout(function () {
     copyAlert.style.display = "none";
   }, 1000);
+}
+
+function checkGameOver(arr) {
+  // let arr = objectRetriever();
+  let player1Counter = 0;
+  let player2Counter = 0;
+  for (let item of arr) {
+    if ("one" == item.player) {
+      for (let key in item.outPiece) {
+        player1Counter++;
+      }
+    }
+    if ("two" == item.player) {
+      for (let key in item.outPiece) {
+        player2Counter++;
+      }
+    }
+  }
+  if (player1Counter == 8) {
+    return "player one";
+  }
+  if (player2Counter == 8) {
+    return "player two";
+  }
+  return false;
 }

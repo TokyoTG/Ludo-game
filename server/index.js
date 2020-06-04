@@ -32,27 +32,27 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "Tokyo",
-  // password: "1234",
-  // database: "ludo_db",
-  // connectTimeout: 50000,
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "bbd595c0cfc9d8",
-  password: "471a0423",
-  database: "heroku_0ac0f4b1f9afa39",
+  host: "localhost",
+  user: "Tokyo",
+  password: "1234",
+  database: "ludo_db",
+  connectTimeout: 50000,
+  // host: "us-cdbr-east-06.cleardb.net",
+  // user: "bbd595c0cfc9d8",
+  // password: "471a0423",
+  // database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    // host: "localhost",
-    // user: "Tokyo",
-    // password: "1234",
-    // database: "ludo_db",
-    // connectTimeout: 50000,
-    host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
-    database: "heroku_0ac0f4b1f9afa39",
+    host: "localhost",
+    user: "Tokyo",
+    password: "1234",
+    database: "ludo_db",
+    connectTimeout: 50000,
+    // host: "us-cdbr-east-06.cleardb.net",
+    // user: "bbd595c0cfc9d8",
+    // password: "471a0423",
+    // database: "heroku_0ac0f4b1f9afa39",
   });
 });
 io.on("connection", (socket) => {
@@ -120,19 +120,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("first_room_data", (data) => {
-    let query = `SELECT games,counts FROM rooms WHERE room_ID='${data}'`;
+    let query = `SELECT name,games,counts,playerOne,playerTwo FROM rooms WHERE room_ID='${data}'`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
         //throw err;
       }
       if (result) {
+        let playerarr = [result[0].playerOne, result[0].playerTwo];
         // console.log(result);
         if (result[0].counts != null) {
           socket.emit("send_room_data", result[0]);
         } else {
           socket.emit("sent_room_data", result[0].games);
         }
+        io.to(result[0].name).emit("players_names", playerarr);
       }
     });
   });
@@ -152,7 +154,6 @@ io.on("connection", (socket) => {
         console.log(err);
         //throw err;
       }
-      console.log("Table created");
     });
     query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
     connection.query(query, function (err, result) {
@@ -285,6 +286,7 @@ io.on("connection", (socket) => {
       //   socket.emit("validation_error", "incorrect room id");
       // }
     });
+
     query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
@@ -299,6 +301,19 @@ io.on("connection", (socket) => {
     });
     io.emit("all_rooms", dbrooms);
     io.to(data.name).emit("add_spinner", "spinner in action"); //notifies the user when the other user left
+  });
+
+  //reset game to default
+  socket.on("resetting_game", (data) => {
+    let roomData = JSON.stringify(store());
+    let query = `UPDATE rooms SET games = '${roomData}', counts = null WHERE room_ID= '${data.id}'`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+    });
+    io.to(data.name).emit("games_counts_reset", "you can play again");
   });
 
   //handles counting emission
@@ -359,16 +374,11 @@ io.on("connection", (socket) => {
   });
   socket.on("disconnect", () => {
     io.to(socketRoom).emit("connection_lost", "try refreshing");
-    // socket.rooms;
-    // console.log(socketRoom);
   });
   socket.on("reconnecting", () => {
-    // ...
     io.to(socketRoom).emit("connection_lost", "try refreshing");
   });
   socket.on("reconnect_attempt", () => {
-    // ...
-    console.log("reconnect");
     io.to(socketRoom).emit("connection_lost", "try refreshing");
   });
 });

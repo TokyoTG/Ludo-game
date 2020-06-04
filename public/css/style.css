@@ -402,3 +402,10 @@ li.dropdown {
   right: 0;
   bottom: 60px;
 }
+.p1-name,
+.p2-name {
+  position: absolute;
+  bottom: 5%;
+  right: 3%;
+  font-size: 0.8em;
+}
