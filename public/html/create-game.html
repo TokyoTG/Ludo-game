@@ -27,7 +27,7 @@
             <button>Submit</button>
         </form>
         <p>
-            <a href="join-game.html">Join room</a>
+            <a href="/join-game">Join room</a>
         </p>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -68,7 +68,7 @@
         })
         socket.on("you_can_create_room", () => {
             socket.emit('create_room', roomObj);
-            location.assign('game.html');
+            location.assign('/game');
         })
         socket.on("room_exists", data => {
             alert(`The room name already exists`);

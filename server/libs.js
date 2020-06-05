@@ -535,13 +535,16 @@ module.exports = {
     var path = url.parse(request.url).pathname;
     switch (path) {
       case "/":
-        this.renderHTML("./index.html", response, fs);
+        this.renderHTML("../public/index.html", response, fs);
         break;
       case "/join-game":
         this.renderHTML("../public/html/join-game.html", response, fs);
         break;
       case "/game":
         this.renderHTML("../public/html/game.html", response, fs);
+        break;
+      case "/create-game":
+        this.renderHTML("../public/html/create-game.html", response, fs);
         break;
       default:
         response.writeHead(404);

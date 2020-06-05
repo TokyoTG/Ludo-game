@@ -35,7 +35,7 @@
             <button>Submit</button>
         </form>
         <p>
-            <a href="create-game.html">Create Room</a>
+            <a href="/create-game">Create Room</a>
         </p>
         <h4>Available Rooms</h4>
         <ul id="roomList">
@@ -125,7 +125,7 @@
                                 socket.emit("increase_num_of_connected", playerObj);
                                 localStorage.playerObj = JSON.stringify(playerObj);
                             } else {
-                                location.assign('index.html')
+                                location.assign('/')
                                 return "No";
                             }
                         } else if (selection == 'two' && item.connected > 0) {
@@ -142,7 +142,7 @@
                         } else {
                             return false;
                         }
-                        location.assign('game.html');
+                        location.assign('/game');
                     }
                 }
             }

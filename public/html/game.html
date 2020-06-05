@@ -257,7 +257,7 @@
     <script src="../js/sql.js"></script>
     <script>
         if (localStorage.getItem('playerObj') == '') {
-            location.replace('index.html') //redirects when the user is not in any room
+            location.replace('/') //redirects when the user is not in any room
         }
         var socket = io(); //initialises the socket.io object
         let player_names = ['playerone', 'playertwo'];
@@ -383,7 +383,7 @@
             localStorage.clear()
             // socket.emit('updateRoom', playerRoom); //request the room info be changed
             socket.emit('a_user_left', playerRoom); //notifies the server a user left
-            location.assign('../index.html') //sends the user that left to home page
+            location.assign('/') //sends the user that left to home page
         })
 
 
