@@ -518,4 +518,35 @@ module.exports = {
 
     // io.emit("all_rooms", dbrooms);
   },
+  renderHTML(path, response, fs) {
+    fs.readFile(path, null, function (error, data) {
+      if (error) {
+        response.writeHead(404);
+        response.write("File not found!");
+      } else {
+        response.write(data);
+      }
+      response.end();
+    });
+  },
+  handleRequest(request, response, url, fs) {
+    response.writeHead(200, { "Content-Type": "text/html" });
+
+    var path = url.parse(request.url).pathname;
+    switch (path) {
+      case "/":
+        this.renderHTML("./index.html", response, fs);
+        break;
+      case "/join-game":
+        this.renderHTML("../public/html/join-game.html", response, fs);
+        break;
+      case "/game":
+        this.renderHTML("../public/html/game.html", response, fs);
+        break;
+      default:
+        response.writeHead(404);
+        response.write("Route not defined");
+        response.end();
+    }
+  },
 };

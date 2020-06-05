@@ -1,5 +1,7 @@
 const lib = require("./libs");
 const app = require("express")();
+const url = require("url");
+const fs = require("fs");
 const express = require("express");
 const store = lib.roomData;
 const http = require("http").createServer(app);
@@ -7,6 +9,10 @@ const io = require("socket.io")(http);
 var mysql = require("mysql");
 let clientPath = __dirname + `/../public`;
 app.use(express.static(clientPath));
+app.get("*", function (req, res) {
+  lib.handleRequest(req, res, url, fs);
+  // res.redirect(clientPath + "/html/join-game.html");
+});
 
 // let query = `CREATE TABLE rooms (
 //  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
