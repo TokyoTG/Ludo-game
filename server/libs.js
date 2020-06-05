@@ -529,22 +529,22 @@ module.exports = {
       response.end();
     });
   },
-  handleRequest(request, response, url, fs) {
+  handleRequest(request, response, url, fs, clientP) {
     response.writeHead(200, { "Content-Type": "text/html" });
 
     var path = url.parse(request.url).pathname;
     switch (path) {
       case "/":
-        this.renderHTML("../public/index.html", response, fs);
+        this.renderHTML(clientP + "/index.html", response, fs);
         break;
       case "/join-game":
-        this.renderHTML("../public/html/join-game.html", response, fs);
+        this.renderHTML(clientP + "/html/join-game.html", response, fs);
         break;
       case "/game":
-        this.renderHTML("../public/html/game.html", response, fs);
+        this.renderHTML(clientP + "/html/game.html", response, fs);
         break;
       case "/create-game":
-        this.renderHTML("../public/html/create-game.html", response, fs);
+        this.renderHTML(clientP + "/html/create-game.html", response, fs);
         break;
       default:
         response.writeHead(404);

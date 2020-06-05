@@ -10,7 +10,7 @@ var mysql = require("mysql");
 let clientPath = __dirname + `/../public`;
 app.use(express.static(clientPath));
 app.get("*", function (req, res) {
-  lib.handleRequest(req, res, url, fs);
+  lib.handleRequest(req, res, url, fs, clientPath);
   // res.redirect(clientPath + "/html/join-game.html");
 });
 
