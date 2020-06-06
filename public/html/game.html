@@ -128,7 +128,7 @@
 
     </div>
 
-    <div class="dice" id="roll-button" onclick="rollsDice()">
+    <div class="dice" id="roll-button">
         <ol class="die-list even-roll" data-roll="1" id="die-1">
             <li class="die-item" data-side="1">
                 <span class="dot"></span>
@@ -256,7 +256,7 @@
     <script src="../js/index.js"></script>
     <script src="../js/sql.js"></script>
     <script>
-        if (localStorage.getItem('playerObj') == '') {
+        if (localStorage.getItem('playerObj') == null) {
             location.replace('/') //redirects when the user is not in any room
         }
         var socket = io(); //initialises the socket.io object
@@ -264,7 +264,7 @@
         let roomList;
         let playerRoom = JSON.parse(localStorage.getItem('playerObj'))
         let playerObj = JSON.parse(localStorage.playerObj);
-        playerRoom.rolled = false;
+        // playerRoom.rolled = false;
         // let mainRoomObj = JSON.parse(localStorage.)
 
         let rollResult, selectedCount, selectedRoll, selectedPiece, roomData; //global variables for DOM element
@@ -272,6 +272,10 @@
         $(document).ready(function () {
             // seedDisplay(objectRetriever());
             socket.emit("first_room_data", playerRoom.id);
+            if (!playerRoom.rolled) {
+                let diceRoller = document.getElementById('roll-button');
+                diceRoller.setAttribute('onclick', 'rollsDice()');
+            }
         })
 
         socket.on("players_names", data => {

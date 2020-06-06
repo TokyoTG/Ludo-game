@@ -38,27 +38,27 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "Tokyo",
-  // password: "1234",
-  // database: "ludo_db",
-  // connectTimeout: 50000,
-  host: "us-cdbr-east-06.cleardb.net",
-  user: "bbd595c0cfc9d8",
-  password: "471a0423",
-  database: "heroku_0ac0f4b1f9afa39",
+  host: "localhost",
+  user: "Tokyo",
+  password: "1234",
+  database: "ludo_db",
+  connectTimeout: 50000,
+  // host: "us-cdbr-east-06.cleardb.net",
+  // user: "bbd595c0cfc9d8",
+  // password: "471a0423",
+  // database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    // host: "localhost",
-    // user: "Tokyo",
-    // password: "1234",
-    // database: "ludo_db",
-    // connectTimeout: 50000,
-    host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
-    database: "heroku_0ac0f4b1f9afa39",
+    host: "localhost",
+    user: "Tokyo",
+    password: "1234",
+    database: "ludo_db",
+    connectTimeout: 50000,
+    // host: "us-cdbr-east-06.cleardb.net",
+    // user: "bbd595c0cfc9d8",
+    // password: "471a0423",
+    // database: "heroku_0ac0f4b1f9afa39",
   });
 });
 io.on("connection", (socket) => {
@@ -77,7 +77,7 @@ io.on("connection", (socket) => {
   //   console.log(error);
   // }
 
-  let query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+  let query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
   try {
     connection.query(query, function (err, result) {
       if (err) {
@@ -85,12 +85,17 @@ io.on("connection", (socket) => {
         console.log(err);
       } else if (result.length) {
         dbrooms = result;
+        io.emit("all_rooms", dbrooms);
       }
     });
   } catch (error) {
     // console.log(error);
   }
-
+  socket.on("get_all_rooms", () => {
+    if (dbrooms.length) {
+      io.emit("all_rooms", dbrooms);
+    }
+  });
   socket.on("update_room_data", (data) => {
     let query = `UPDATE rooms SET games ='${JSON.stringify(
       data.roomData
@@ -167,17 +172,19 @@ io.on("connection", (socket) => {
   // });
   socket.on("create_room", (data) => {
     let roomData = JSON.stringify(store());
+    let rolls = "[false,false]";
+    let score = "[0,0]";
     roomList.push(data); //stores the room info in an array on the server
     let query = `
-    INSERT INTO rooms(room_ID, creator, playerOne,games,name,connected) 
-    VALUES ('${data.id}','${data.playerName}','${data.playerName}','${roomData}','${data.name}',1)`;
+    INSERT INTO rooms(room_ID, creator, playerOne,games,name,connected,rolls,score) 
+    VALUES ('${data.id}','${data.playerName}','${data.playerName}','${roomData}','${data.name}',1,'${rolls}','${score}')`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
         //throw err;
       }
     });
-    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -220,7 +227,7 @@ io.on("connection", (socket) => {
         //throw err;
       }
     });
-    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -242,7 +249,7 @@ io.on("connection", (socket) => {
         //throw err;
       }
     });
-    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -302,14 +309,8 @@ io.on("connection", (socket) => {
       if (err) {
         console.log(err);
       }
-      // if (result.changedRows) {
-      //   socket.emit("validated", true);
-      // } else {
-      //   socket.emit("validation_error", "incorrect room id");
-      // }
     });
-
-    query = `SELECT name,playerOne,playerTwo,room_ID,connected FROM rooms`;
+    query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
     connection.query(query, function (err, result) {
       if (err) {
         console.log(err);
@@ -323,6 +324,34 @@ io.on("connection", (socket) => {
     });
     io.emit("all_rooms", dbrooms);
     io.to(data.name).emit("add_spinner", "spinner in action"); //notifies the user when the other user left
+  });
+
+  socket.on("a_user_left", (data) => {
+    let rolls, stringRoll;
+    let query = `SELECT rolls,score FROM rooms WHERE room_ID= '${data.id}'`;
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.log(err);
+        //throw err;
+      }
+      if (result) {
+        if (result.length) {
+          rolls = JSON.parse(result[0].rolls);
+          if (data.player == "one") {
+            rolls[0] = data.rolled;
+          } else if (data.player == "two") {
+            rolls[1] = data.rolled;
+          }
+          stringRoll = JSON.stringify(rolls);
+          query = `UPDATE rooms SET rolls = '${stringRoll}' WHERE room_ID= '${data.id}'`;
+          connection.query(query, function (err, result) {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+      }
+    });
   });
 
   //reset game to default

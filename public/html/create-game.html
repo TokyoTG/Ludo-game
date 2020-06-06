@@ -55,13 +55,15 @@
                 id: generateRoomId(),
                 playerName: playerName,
                 player: 'one',
+                rolled: false,
             }
-            let playerObj = {
-                playerName: playerName,
-                id: generateRoomId(),
-                name: roomName,
-                player: 'one',
-            }
+            // let playerObj = {
+            //     playerName: playerName,
+            //     id: generateRoomId(),
+            //     name: roomName,
+
+            //     player: 'one',
+            // }
             localStorage.clear();
             localStorage.setItem('playerObj', JSON.stringify(roomObj))
             socket.emit("check_room_name", roomObj);

@@ -49,6 +49,8 @@
                     <td>Player One</td>
                     <td>Player Two</td>
                     <td>Connected</td>
+                    <td>Score</td>
+                    <td>Roll</td>
                 </tr>
             </thead>
             <tbody id="roomTable">
@@ -74,7 +76,7 @@
 
         let rooms;
         let dbrooms;
-
+        socket.emit("get_all_rooms", "I need those rooms mehn")
         socket.on('all_rooms', data => {
             console.log(data);
             dbrooms = data
@@ -88,6 +90,8 @@
                   <td>${element.playerOne}</td>
                   <td>${element.playerTwo}</td>
                   <td>${element.connected}</td>
+                    <td>${element.score}</td>
+                    <td>${element.rolls}</td>
                 </tr>
         `
             });
@@ -112,6 +116,7 @@
             for (let item of dbrooms) {
                 if (item.room_ID == roomId) {
                     joinObj.name = item.name;
+                    let rolldetails = JSON.parse(item.rolls);
                     let playerObj = {
                         playerName: playerName,
                         id: roomId,
@@ -121,6 +126,7 @@
                         if (selection == 'one') {
                             if (item.connected == 0) {
                                 playerObj.player = 'one';
+                                playerObj.rolled = rolldetails[0]
                                 playerObj.playerName = item.playerOne
                                 socket.emit("increase_num_of_connected", playerObj);
                                 localStorage.playerObj = JSON.stringify(playerObj);
@@ -130,6 +136,7 @@
                             }
                         } else if (selection == 'two' && item.connected > 0) {
                             playerObj.player = 'two';
+                            playerObj.rolled = rolldetails[1]
                             if (item.playerTwo != null) {
                                 playerObj.playerName = item.playerTwo
                                 socket.emit("increase_num_of_connected", playerObj);
