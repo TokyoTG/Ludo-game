@@ -13,7 +13,7 @@
 <body>
     <div>
         <h2>Welcome Please Create Game Room</h2>
-        <form id="create" method="POST" action="/create-game-form">
+        <form id="create">
             <h4>Create Room</h4>
             <p>All fields are required</p>
             <p>
@@ -43,31 +43,31 @@
         var socket = io();
         let roomObj = {};
         //creates a new room
-        // $("#create").submit(function (e) {
-        //     e.preventDefault()
-        //     let playerName = $("#creator-name").val();
-        //     let roomName = $("#room-name").val();
-        //     roomObj.connectedPlayers = [];
-        //     roomObj.connectedPlayers.push(playerName);
-        //     roomObj = {
-        //         name: roomName,
-        //         creator: playerName,
-        //         id: generateRoomId(),
-        //         playerName: playerName,
-        //         player: 'one',
-        //         rolled: false,
-        //     }
-        //     localStorage.clear();
-        //     localStorage.setItem('playerObj', JSON.stringify(roomObj))
-        //     socket.emit("check_room_name", roomObj);
-        // })
-        // socket.on("you_can_create_room", () => {
-        //     socket.emit('create_room', roomObj);
-        //     location.assign('/game');
-        // })
-        // socket.on("room_exists", data => {
-        //     alert(`The room name already exists`);
-        // })
+        $("#create").submit(function (e) {
+            e.preventDefault()
+            let playerName = $("#creator-name").val();
+            let roomName = $("#room-name").val();
+            roomObj.connectedPlayers = [];
+            roomObj.connectedPlayers.push(playerName);
+            roomObj = {
+                name: roomName,
+                creator: playerName,
+                id: generateRoomId(),
+                playerName: playerName,
+                player: 'one',
+                rolled: false,
+            }
+            localStorage.clear();
+            localStorage.setItem('playerObj', JSON.stringify(roomObj))
+            socket.emit("check_room_name", roomObj);
+        })
+        socket.on("you_can_create_room", () => {
+            socket.emit('create_room', roomObj);
+            location.assign('/game');
+        })
+        socket.on("room_exists", data => {
+            alert(`The room name already exists`);
+        })
 
         function generateRoomId() {
             let roomId = "";
