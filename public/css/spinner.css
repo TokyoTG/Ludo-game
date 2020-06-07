@@ -115,9 +115,11 @@ body {
   position: fixed;
   background: black;
   z-index: 20000;
-  background-color: rgb(0, 0, 0);
   /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4);
+  /* background: url("../img/ludo-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover; */
 }
 
 #spinner-container2 {

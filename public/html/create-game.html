@@ -13,16 +13,16 @@
 <body>
     <div>
         <h2>Welcome Please Create Game Room</h2>
-        <form id="create">
+        <form id="create" method="POST" action="/create-game-form">
             <h4>Create Room</h4>
             <p>All fields are required</p>
             <p>
                 <label for="creator-name">Player Name*</label><br>
-                <input type="text" name="creator-name" id="creator-name" required>
+                <input type="text" name="creator_name" id="creator-name">
             </p>
             <p>
                 <label for="room-name">Room Name*</label><br>
-                <input type="text" name="room-name" id="room-name" required>
+                <input type="text" name="room_name" id="room-name">
             </p>
             <button>Submit</button>
         </form>
@@ -43,38 +43,31 @@
         var socket = io();
         let roomObj = {};
         //creates a new room
-        $("#create").submit(function (e) {
-            e.preventDefault()
-            let playerName = $("#creator-name").val();
-            let roomName = $("#room-name").val();
-            roomObj.connectedPlayers = [];
-            roomObj.connectedPlayers.push(playerName);
-            roomObj = {
-                name: roomName,
-                creator: playerName,
-                id: generateRoomId(),
-                playerName: playerName,
-                player: 'one',
-                rolled: false,
-            }
-            // let playerObj = {
-            //     playerName: playerName,
-            //     id: generateRoomId(),
-            //     name: roomName,
-
-            //     player: 'one',
-            // }
-            localStorage.clear();
-            localStorage.setItem('playerObj', JSON.stringify(roomObj))
-            socket.emit("check_room_name", roomObj);
-        })
-        socket.on("you_can_create_room", () => {
-            socket.emit('create_room', roomObj);
-            location.assign('/game');
-        })
-        socket.on("room_exists", data => {
-            alert(`The room name already exists`);
-        })
+        // $("#create").submit(function (e) {
+        //     e.preventDefault()
+        //     let playerName = $("#creator-name").val();
+        //     let roomName = $("#room-name").val();
+        //     roomObj.connectedPlayers = [];
+        //     roomObj.connectedPlayers.push(playerName);
+        //     roomObj = {
+        //         name: roomName,
+        //         creator: playerName,
+        //         id: generateRoomId(),
+        //         playerName: playerName,
+        //         player: 'one',
+        //         rolled: false,
+        //     }
+        //     localStorage.clear();
+        //     localStorage.setItem('playerObj', JSON.stringify(roomObj))
+        //     socket.emit("check_room_name", roomObj);
+        // })
+        // socket.on("you_can_create_room", () => {
+        //     socket.emit('create_room', roomObj);
+        //     location.assign('/game');
+        // })
+        // socket.on("room_exists", data => {
+        //     alert(`The room name already exists`);
+        // })
 
         function generateRoomId() {
             let roomId = "";

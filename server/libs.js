@@ -552,4 +552,8 @@ module.exports = {
         response.end();
     }
   },
+  handleCreateRoom(request, response) {
+    let requestBody = request.body;
+    return response.send(request.body);
+  },
 };

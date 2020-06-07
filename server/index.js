@@ -2,12 +2,14 @@ const lib = require("./libs");
 const app = require("express")();
 const url = require("url");
 const fs = require("fs");
+const bodyParser = require("body-parser");
 const express = require("express");
 const store = lib.roomData;
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 var mysql = require("mysql");
 let clientPath = __dirname + `/../public`;
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(clientPath));
 app.get("*", function (req, res) {
   lib.handleRequest(req, res, url, fs, clientPath);
@@ -38,45 +40,31 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "Tokyo",
-  // password: "1234",
-  // database: "ludo_db",
-  // connectTimeout: 50000,
-  host: "us-cdbr-east-06.cleardb.net",
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: "heroku_0ac0f4b1f9afa39",
+  host: "localhost",
+  user: "Tokyo",
+  password: "1234",
+  database: "ludo_db",
+  connectTimeout: 50000,
+  // host: "us-cdbr-east-06.cleardb.net",
+  // user: process.env.USERNAME,
+  // password: process.env.PASSWORD,
+  // database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    // host: "localhost",
-    // user: "Tokyo",
-    // password: "1234",
-    // database: "ludo_db",
-    // connectTimeout: 50000,
-    host: "us-cdbr-east-06.cleardb.net",
-    user: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    database: "heroku_0ac0f4b1f9afa39",
+    host: "localhost",
+    user: "Tokyo",
+    password: "1234",
+    database: "ludo_db",
+    connectTimeout: 50000,
+    // host: "us-cdbr-east-06.cleardb.net",
+    // user: process.env.USERNAME,
+    // password: process.env.PASSWORD,
+    // database: "heroku_0ac0f4b1f9afa39",
   });
 });
 io.on("connection", (socket) => {
   let socketRoom;
-
-  // try {
-  //   connection.connect(function (err) {
-  //     if (err) {
-  //       console.error("error connecting: " + err.stack);
-  //       // throw "Error Connecting to database";
-  //       return;
-  //     }
-  //     console.log("connected as id " + connection.threadId);
-  //   });
-  // } catch (error) {
-  //   console.log(error);
-  // }
-
   let query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
   try {
     connection.query(query, function (err, result) {
@@ -91,6 +79,16 @@ io.on("connection", (socket) => {
   } catch (error) {
     // console.log(error);
   }
+
+  app.post("/create-game-form", function (request, response) {
+    let requestBody = request.body;
+    if (requestBody.creator_name == "" || requestBody.room_name == "") {
+      return response.redirect("/create-game");
+    } else {
+      return response.send(requestBody);
+    }
+  });
+
   socket.on("get_all_rooms", () => {
     if (dbrooms.length) {
       io.emit("all_rooms", dbrooms);
