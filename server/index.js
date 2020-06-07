@@ -44,8 +44,10 @@ var connection = mysql.createConnection({
   // database: "ludo_db",
   // connectTimeout: 50000,
   host: "us-cdbr-east-06.cleardb.net",
-  user: "bbd595c0cfc9d8",
-  password: "471a0423",
+  // user: "bbd595c0cfc9d8",
+  // password: "471a0423",
+  user: process.env.USERNAME,
+  password: process.env.PASSWORD,
   database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
@@ -56,8 +58,10 @@ connection.on("error", function () {
     // database: "ludo_db",
     // connectTimeout: 50000,
     host: "us-cdbr-east-06.cleardb.net",
-    user: "bbd595c0cfc9d8",
-    password: "471a0423",
+    // user: "bbd595c0cfc9d8",
+    // password: "471a0423",
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
     database: "heroku_0ac0f4b1f9afa39",
   });
 });
