@@ -8,6 +8,9 @@
 </head>
 
 <body>
+    <nav>
+        <h1><a href="/">Ludomania</a></h1>
+    </nav>
     <section>
         <h1>Quick Introduction on How to Play</h1>
         <p>This page will give a quick guide on how to play. We will going to the following topics</p>
@@ -20,56 +23,55 @@
             <li><a href="#roll">Roll Dice</a></li>
             <li><a href="#counting">Counting</a></li>
             <li><a href="exit">Exiting Game</a></li>
-            <li><a href="continue">Continue Unfinished Game</a></li>
-            <li><a href="after"> After Winning</a></li>
+            <li><a href="#continue">Continue Unfinished Game</a></li>
+            <li><a href="#after"> After Winning</a></li>
         </ul>
     </section>
 
     <section>
 
-        <h3>Game Rule</h3>
+        <h3 id="game-rules">Game Rule</h3>
         <li>This application follows the standard ludo game rule</li>
-        <h3>Create Game Room</h3>
+        <h3 id="create">Create Game Room</h3>
         <li>To creat a room just head <a href="/create-game">here</a> and fill the form</li>
         <li>The creator of the room is player one</li>
-        <h3>Join Game Room</h3>
+        <h3 id="join">Join Game Room</h3>
         <li>You can join a room only if you have the room ID</li>
         <li>To join room head <a href="/join-game">here</a> here and fill the form as appropriate</li>
-        <h3>House</h3>
+        <h3 id="house">House</h3>
         <li>The house that belongs to a player is indicated with the player name inside the house</li>
-        <h3>Turn</h3>
+        <h3 id="turn">Turn</h3>
         <li>On start of a new game, any of the player can roll the dice first
         </li>
         <li> Afterwards it is controlled by the turn
             toast</li>
         <li>The turn toast alerts the player that he can roll the dice after the other player is done counting</li>
-        <h3>Roll a Dice</h3>
+        <h3 id="roll">Roll a Dice</h3>
         <li>To roll a dice click on the dice to roll them.</li>
-        <li>The result are displayed in a small boxes on the top of
+        <li>The result are displayed in a small boxes on the bottom of
             the game board</li>
-        <h3>Counting</h3>
+        <h3 id="counting">Counting</h3>
         <li>To count, select the piece you want to count</li>
         <li>Then select the dice result you want to use to count</li>
         <li>Then click on count</li>
-        <h3>Exit Game</h3>
+        <li>Forfiet count, allows you to switch turn to the other player if you cannot count</li>
+        <h3 id="exit">Exit Game</h3>
         <li>Exiting a game implies you intend to exit the game room</li>
         <li>After clicking on exit, the other player is notified of your exit and the game data is saved</li>
-        <h3>Continue Unfinished Game</h3>
+        <h3 id="continue">Continue Unfinished Game</h3>
         <li>An unfinished game can be continue only if you still have the room ID of the game</li>
         <li>All you have to do is click on join room and join as player(player one or two) you were before</li>
-        <h3>After Wining</h3>
+        <h3 id="after">After Wining</h3>
         <li>When a game is won by a player, a modal popup indicating the name of the user that won</li>
         <li>The player can either exit or play again game</li>
     </section>
     <section>
-
         <h2>Next Steps</h2>
         <ul>
             <li><a href="/create-game">Create Game</a></li>
             <li><a href="/join-game">Join Game</a></li>
         </ul>
     </section>
-
 </body>
 
 </html>
