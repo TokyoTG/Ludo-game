@@ -6,15 +6,17 @@
   <meta name="theme-color" content="#1de9b6">
   <link rel="stylesheet" href="./css/index.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
+  <title>Ludomania | Home</title>
 </head>
 <style>
 </style>
 
 <body>
-  <h1>Welcome to ludomania</h1>
+  <h1>Welcome to Ludomania</h1>
   <p>An online multi-player ludo game that gives you the opportunity to thrash your distant loved ones</p>
   <nav>
+    <p>It is advisable you through the instructions <a href="/instructions">here</a> before creating or joining a game
+    </p>
     <ul>
       <li><a href="/create-game">Create Game</a></li>
       <li><a href="/join-game">Join Game</a></li>
@@ -24,144 +26,7 @@
   <script src="./js/index.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script>
-    // if (localStorage.getItem('roomObj')) {
-    //   location.replace('game.html')
-    // }
 
-    //should be removed when working on multiplayer
-
-    // var socket = io();
-    // let roomObj = {};
-
-
-    // //creates a new room
-    // $("#create").submit(function (e) {
-    //   e.preventDefault()
-    //   let playerName = $("#creator-name").val();
-    //   let roomName = $("#room-name").val();
-    //   roomObj.connectedPlayers = [];
-    //   roomObj.connectedPlayers.push(playerName);
-    //   roomObj = {
-    //     name: roomName,
-    //     creator: playerName,
-    //     id: generateRoomId(),
-    //     playerName: playerName,
-    //     player: 'one',
-    //   }
-    //   let playerObj = {
-    //     playerName: playerName,
-    //     id: generateRoomId(),
-    //     name: roomName,
-    //     player: 'one',
-    //   }
-    //   localStorage.clear();
-    //   // localStorage.playerObj = JSON.stringify(playerObj);
-    //   localStorage.setItem('playerObj', JSON.stringify(roomObj))
-    //   socket.emit('create_room', roomObj);
-    //   // localStorage.player1 = JSON.stringify(roomObj);
-    //   location.assign('./game.html');
-    // })
-
-    // // socket.on('assign_room_object', data => {
-    // //   localStorage.roomObj = JSON.stringify(data);
-    // // })
-
-
-    // let rooms;
-    // let dbrooms;
-
-    // function generateRoomId() {
-    //   let roomId = "";
-    //   let index;
-    //   let alphabets = [9, 'a', 'A', 2, 'c', 'C', 3, 'D', 4, 'E', 5, 'F', 6, 'G', 7, 'I', 8, 'm', "M",
-    //     '1', 'z', 'w', 0
-    //   ];
-
-    //   for (let i = 0; i < 10; i++) {
-    //     index = Math.floor(Math.random() * alphabets.length - 1) + 1;
-    //     roomId
-    //       += alphabets[index];
-    //   }
-    //   return roomId;
-    // }
-
-    // socket.on('all_rooms', data => {
-    //   console.log(data);
-    //   dbrooms = data
-    //   let tabletext = ''
-    //   let tableBody = $('#roomTable')
-    //   data.forEach(element => {
-    //     tabletext += `
-    //             <tr>
-    //               <td>${element.room_ID}</td>
-    //               <td>${element.name}</td>
-    //               <td>${element.playerOne}</td>
-    //               <td>${element.playerTwo}</td>
-    //               <td>${element.connected}</td>
-    //             </tr>
-    //     `
-    //   });
-    //   tableBody.text('');
-    //   tableBody.append(tabletext);
-    // })
-
-
-    // $("#join").submit(function (e) {
-    //   e.preventDefault()
-    //   let playerName = $("#player-name").val().trim();
-    //   let roomId = $("#room-id").val().trim();
-    //   let selection = $("#join :selected").val().trim();
-    //   if (playerName == '' || roomId == '' || selection == '') {
-    //     alert('You are Wrong');
-    //     return 1;
-    //   }
-    //   let joinObj = {
-    //     id: roomId,
-    //     playerName: playerName,
-    //   }
-    //   for (let item of dbrooms) {
-    //     if (item.room_ID == roomId) {
-    //       joinObj.name = item.name;
-    //       let playerObj = {
-    //         playerName: playerName,
-    //         id: roomId,
-    //         name: item.name,
-    //       };
-    //       if (item.connected <= 2) {
-    //         if (selection == 'one') {
-    //           if (item.connected == 0) {
-    //             playerObj.player = 'one';
-    //             playerObj.playerName = item.playerOne
-    //             socket.emit("increase_num_of_connected", playerObj);
-    //             localStorage.playerObj = JSON.stringify(playerObj);
-    //           } else {
-    //             location.assign('index.html')
-    //             return "No";
-    //           }
-    //         } else if (selection == 'two' && item.connected > 0) {
-    //           playerObj.player = 'two';
-    //           if (item.playerTwo != null) {
-    //             playerObj.playerName = item.playerTwo
-    //             socket.emit("increase_num_of_connected", playerObj);
-    //           } else {
-    //             playerObj.player = 'two';
-    //             playerObj.playerName = playerName
-    //             socket.emit("update_player_two", playerObj);
-    //           }
-    //           localStorage.playerObj = JSON.stringify(playerObj);
-    //         } else {
-    //           return false;
-    //         }
-    //         location.assign('./game.html');
-    //       }
-    //     }
-    //   }
-
-    // })
-
-    // socket.on('validated', data => {
-    //   location.assign('./game.html')
-    // })
   </script>
 </body>
 

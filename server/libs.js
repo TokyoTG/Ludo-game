@@ -546,6 +546,9 @@ module.exports = {
       case "/create-game":
         this.renderHTML(clientP + "/html/create-game.html", response, fs);
         break;
+      case "/instructions":
+        this.renderHTML(clientP + "/html/instructions.html", response, fs);
+        break;
       default:
         response.writeHead(404);
         response.write("Route not defined");

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dice2.css">
     <link rel="stylesheet" href="../css/spinner.css">
-    <title>Document</title>
+    <title>Ludomania | Main Game</title>
 </head>
 
 <body>
@@ -216,6 +216,7 @@
 
     </div>
     <p class="turn-toast" id="toast2">Your turn</p>
+    <p class="turn-toast" id="toast3">Not your piece</p>
     <div id="spinner-container">
         <p id="toast">Copied !!</p>
         <span class="close" title="Leave Room">&times;</span>
@@ -475,7 +476,11 @@
                 socket.emit('selection_made', data);
                 // console.log(data);
             } else {
-                alert('You can not select, Its not ur house')
+                let copyAlert = document.getElementById("toast3");
+                copyAlert.style.display = "block";
+                setTimeout(function () {
+                    copyAlert.style.display = "none";
+                }, 500);
             }
             // console.log(playerRoom.player);
         })
