@@ -8,7 +8,9 @@
     <title>Ludomania | Join Game</title>
 </head>
 <style>
-
+    #error {
+        color: red;
+    }
 </style>
 
 <body>
@@ -21,6 +23,7 @@
             <h4>Join Room</h4>
             <p>Join as appropriate player</p>
             <p>All fields are required</p>
+            <p id="error"></p>
             <p>
                 <label for="player-name">Player Name*</label>
                 <input type="text" name="player-name" id="player-name" required>
@@ -48,13 +51,10 @@
         <table>
             <thead>
                 <tr>
-                    <td>Id</td>
                     <td>Room Name</td>
                     <td>Player One</td>
                     <td>Player Two</td>
                     <td>Connected</td>
-                    <td>Score</td>
-                    <td>Roll</td>
                 </tr>
             </thead>
             <tbody id="roomTable">
@@ -89,13 +89,11 @@
             data.forEach(element => {
                 tabletext += `
                 <tr>
-                  <td>${element.room_ID}</td>
+
                   <td>${element.name}</td>
                   <td>${element.playerOne}</td>
                   <td>${element.playerTwo}</td>
                   <td>${element.connected}</td>
-                    <td>${element.score}</td>
-                    <td>${element.rolls}</td>
                 </tr>
         `
             });
@@ -110,7 +108,7 @@
             let roomId = $("#room-id").val().trim();
             let selection = $("#join :selected").val().trim();
             if (playerName == '' || roomId == '' || selection == '') {
-                alert('You are Wrong');
+                $("#error").text("The room name, player selection and player name cannot be empty");
                 return 1;
             }
             let joinObj = {
@@ -126,7 +124,7 @@
                         id: roomId,
                         name: item.name,
                     };
-                    if (item.connected <= 2) {
+                    if (item.connected < 2) {
                         if (selection == 'one') {
                             if (item.connected == 0) {
                                 playerObj.player = 'one';
@@ -135,7 +133,9 @@
                                 socket.emit("increase_num_of_connected", playerObj);
                                 localStorage.playerObj = JSON.stringify(playerObj);
                             } else {
-                                location.assign('/')
+                                $("#error").text(
+                                    "Someone is in the room, you cannot Join as player one");
+                                // location.assign('/join-game')
                                 return "No";
                             }
                         } else if (selection == 'two' && item.connected > 0) {
@@ -151,12 +151,18 @@
                             }
                             localStorage.playerObj = JSON.stringify(playerObj);
                         } else {
+                            $("#error").text("No one is in the room, you cannot Join as player one");
+                            //   location.assign('/join-game')
                             return false;
                         }
                         location.assign('/game');
                     }
                 }
             }
+            $("#error").text("Invalid room ID or Room is filled up");
+            // location.assign('/join-game')
+            return false;
+
 
         })
     </script>

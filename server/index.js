@@ -36,27 +36,27 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "Tokyo",
-  password: "1234",
-  database: "ludo_db",
-  connectTimeout: 50000,
-  // host: "us-cdbr-east-06.cleardb.net",
-  // user: process.env.USERNAME,
-  // password: process.env.PASSWORD,
-  // database: "heroku_0ac0f4b1f9afa39",
+  // host: "localhost",
+  // user: "Tokyo",
+  // password: "1234",
+  // database: "ludo_db",
+  // connectTimeout: 50000,
+  host: "us-cdbr-east-06.cleardb.net",
+  user: process.env.USERNAME,
+  password: process.env.PASSWORD,
+  database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    host: "localhost",
-    user: "Tokyo",
-    password: "1234",
-    database: "ludo_db",
-    connectTimeout: 50000,
-    // host: "us-cdbr-east-06.cleardb.net",
-    // user: process.env.USERNAME,
-    // password: process.env.PASSWORD,
-    // database: "heroku_0ac0f4b1f9afa39",
+    // host: "localhost",
+    // user: "Tokyo",
+    // password: "1234",
+    // database: "ludo_db",
+    // connectTimeout: 50000,
+    host: "us-cdbr-east-06.cleardb.net",
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: "heroku_0ac0f4b1f9afa39",
   });
 });
 
