@@ -675,7 +675,11 @@ function addToOutside(element) {
   displayDbOutsidePiece(arrr);
   let gameover = checkGameOver(arrr);
   if (gameover) {
-    socket.emit("a_user_won");
+    let gameOverObj = {
+      name: playerRoom.name,
+      player: gameover,
+    };
+    socket.emit("a_user_won", gameOverObj);
   }
   // displayOutsidePiece();
 }

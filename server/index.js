@@ -11,10 +11,6 @@ var mysql = require("mysql");
 let clientPath = __dirname + `/../public`;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(clientPath));
-app.get("*", function (req, res) {
-  lib.handleRequest(req, res, url, fs, clientPath);
-  // res.redirect(clientPath + "/html/join-game.html");
-});
 
 // let query = `CREATE TABLE rooms (
 //  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -40,31 +36,37 @@ const PORT = process.env.PORT || 5000;
 //main game
 let roomList = [];
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "Tokyo",
-  password: "1234",
-  database: "ludo_db",
-  connectTimeout: 50000,
-  // host: "us-cdbr-east-06.cleardb.net",
-  // user: process.env.USERNAME,
-  // password: process.env.PASSWORD,
-  // database: "heroku_0ac0f4b1f9afa39",
+  // host: "localhost",
+  // user: "Tokyo",
+  // password: "1234",
+  // database: "ludo_db",
+  // connectTimeout: 50000,
+  host: "us-cdbr-east-06.cleardb.net",
+  user: process.env.USERNAME,
+  password: process.env.PASSWORD,
+  database: "heroku_0ac0f4b1f9afa39",
 });
 connection.on("error", function () {
   connection = mysql.createConnection({
-    host: "localhost",
-    user: "Tokyo",
-    password: "1234",
-    database: "ludo_db",
-    connectTimeout: 50000,
-    // host: "us-cdbr-east-06.cleardb.net",
-    // user: process.env.USERNAME,
-    // password: process.env.PASSWORD,
-    // database: "heroku_0ac0f4b1f9afa39",
+    // host: "localhost",
+    // user: "Tokyo",
+    // password: "1234",
+    // database: "ludo_db",
+    // connectTimeout: 50000,
+    host: "us-cdbr-east-06.cleardb.net",
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: "heroku_0ac0f4b1f9afa39",
   });
+});
+
+app.get("*", function (req, res) {
+  lib.handleRequest(req, res, url, fs, clientPath);
+  // res.redirect(clientPath + "/html/join-game.html");
 });
 io.on("connection", (socket) => {
   let socketRoom;
+
   let query = `SELECT name,playerOne,playerTwo,room_ID,connected,rolls,score FROM rooms`;
   try {
     connection.query(query, function (err, result) {
@@ -322,8 +324,10 @@ io.on("connection", (socket) => {
     });
     io.emit("all_rooms", dbrooms);
     io.to(data.name).emit("add_spinner", "spinner in action"); //notifies the user when the other user left
+    socketRoom = undefined;
   });
 
+  //stores user roll info after user left
   socket.on("a_user_left", (data) => {
     let rolls, stringRoll;
     let query = `SELECT rolls,score FROM rooms WHERE room_ID= '${data.id}'`;
@@ -365,6 +369,9 @@ io.on("connection", (socket) => {
     io.to(data.name).emit("games_counts_reset", "you can play again");
   });
 
+  socket.on("a_user_won", (data) => {
+    io.to(data.name).emit("somebody_won", data);
+  });
   //handles counting emission
   socket.on("piece_counted", (data) => {
     io.to(data.name).emit("counting", "counting in action"); //shows the count to user
