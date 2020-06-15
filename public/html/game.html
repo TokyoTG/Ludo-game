@@ -251,6 +251,22 @@
         <p>Connection lost reconnecting...</p>
 
     </div>
+
+    <div class="play__stage--modal" id="modal">
+        <div class="container modal-container">
+            <div class="modal">
+                <div class="modal-content">
+                    <h2>GAME OVER</h2>
+                    <p id="won-player">Player one Won</p>
+                    <button id="modal-play-again">Play Again</button>
+                    <button id="modal-exit">Exit Room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="../js/index.js"></script>
@@ -327,12 +343,14 @@
         $("#copy").attr('value', `${playerRoom.id}`)
         //resets game
 
-        $("#reset").click(function (e) {
+        $("#modal-play-again").click(function (e) {
             e.preventDefault();
             socket.emit("resetting_game", playerRoom);
         })
 
         socket.on("games_counts_reset", () => {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
             socket.emit("first_room_data", playerRoom.id);
         })
 
@@ -343,6 +361,10 @@
         })
 
         $(".close").click(function () {
+            $("#quit").click();
+        })
+
+        $("#modal-exit").click(function () {
             $("#quit").click();
         })
 
@@ -387,7 +409,7 @@
             localStorage.clear()
             // socket.emit('updateRoom', playerRoom); //request the room info be changed
             socket.emit('a_user_left', playerRoom); //notifies the server a user left
-            location.assign('/') //sends the user that left to home page
+            location.assign('/join-game') //sends the user that left to home page
         })
 
 
@@ -491,6 +513,19 @@
 
             rolls();
         })
+
+        //handle game over 
+        socket.on("somebody_won", data => {
+            const modal = document.getElementById('modal');
+            if (data.player == "player one") {
+                $("#won-player").text(player_names[0])
+            } else if (data.player == "player two") {
+                $("#won-player").text(player_names[1])
+            }
+            modal.style.display = 'flex';
+        })
+
+
 
         //handles connection
         socket.on('user_is_connected', function () {
